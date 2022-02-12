@@ -1,0 +1,226 @@
+﻿<UserControl x:Class="Warehouse_Manage.Pages.Farms"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Warehouse_Manage.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             FlowDirection="RightToLeft"
+             >
+    <Grid Background="White">
+        <Grid  Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition />
+                <RowDefinition Height="0"/>
+
+
+            </Grid.RowDefinitions>
+            <Button Content="اضافة مزرعة"   Grid.Row="0" Style="{StaticResource StandardButtonSound}" Name="AddFarm" Click="AddFarm_Click" />
+
+
+            <Border Margin="0" CornerRadius="3" Padding="5" Grid.Row="2" Style="{StaticResource ShadowBorder}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+
+
+                    <DataGrid   Name="DatagridFarm" Style="{StaticResource DataGridStyle }"   Grid.Row="2" >
+                      
+                        <DataGrid.Resources>
+
+                           
+
+                            <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                <Setter Property="Height" Value="50"/>
+
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate >
+                                            <Border CornerRadius="5" Background="#ECF2FF">
+                                                <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                            </Border>
+
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+
+
+
+                            </Style>
+
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+
+
+                            <DataGridTemplateColumn Header="رقم المزرعة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding FarmID}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            
+                            <DataGridTemplateColumn Header="اسم المزرعة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding FarmName}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="تاريخ الاضافة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding DateEnter}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+
+
+                            <DataGridTemplateColumn  Width="200" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <Button CommandParameter="{Binding .}" Click="EditFarm_Click" Name="EditFarm" Width="200" HorizontalAlignment="Center"  Content="تعديل" Style="{StaticResource StandardButtonSound}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            
+            
+            
+
+        </Grid>
+
+
+
+
+        <Popup Name="AddFarmPop"  PopupAnimation="Slide" AllowsTransparency="True" Placement="Center"  MinWidth="350" Margin="20"  >
+            <Border Style="{StaticResource ShadowBorder}"   CornerRadius="10" >
+
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="{StaticResource UnitColumnWidth}"/>
+                        <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="{StaticResource MainLabelHeight}"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition MinHeight="30"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition MinHeight="30"/>
+                        <RowDefinition Height="10"/>
+
+                    </Grid.RowDefinitions>
+
+                    <Border Style="{StaticResource ShadowBorderHeader}"   Grid.ColumnSpan="19" Grid.RowSpan="2" />
+
+                    <TextBlock Name="lblHeader" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" FontSize="20" FontWeight="SemiBold"  Text="اضافة مزرعة جديدة" Style="{StaticResource TitleHomePage }"/>
+
+
+
+                    <ToggleButton Name="CloseAddFarm" Click="CloseAddFarm_Click"  VerticalAlignment="Center" Grid.Column="3" Grid.Row="1"  Content="X" Height="30" Width="30" HorizontalAlignment="Right" Style="{StaticResource StandardButtonToggle}" Margin="0,0,5,0" />
+
+
+
+
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3">
+                        <Button Content="الغاء الامر" Click="CloseAddFarm_Click" MinWidth="103"  Height="30"  Style="{StaticResource  StandardButtonWhite }"/>
+                        <Grid Width="15"/>
+                        <Button Click="btnAddFarm_Click" Name="btnAddFarm" Content="تخزين"    Style="{StaticResource StandardButtonSound}"/>
+                    </StackPanel>
+
+
+
+                    <Grid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition/>
+
+                        </Grid.ColumnDefinitions>
+                        <TextBlock  Grid.Column="0" Text="{Binding UnitNamelbl}" Style="{StaticResource textblockEdit}"/>
+
+                        <TextBox KeyDown="txtFarmName_KeyDown" Name="txtFarmName" Grid.Column="2" Style="{StaticResource EntryNewWithHint}" Uid="ادخل اسم المزرعة" Grid.ColumnSpan="3"/>
+
+                    </Grid>
+
+
+                    <Grid Background="{StaticResource GraySystem}" Height="1" Grid.Row="6" VerticalAlignment="Center" Grid.ColumnSpan="5"/>
+
+
+
+
+
+                    <TextBlock Name="txtMessage" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="7" Text="" Style="{StaticResource textblockEdit}"/>
+
+
+
+
+                </Grid>
+
+
+
+
+
+            </Border>
+
+        </Popup>
+
+
+    </Grid>
+</UserControl>

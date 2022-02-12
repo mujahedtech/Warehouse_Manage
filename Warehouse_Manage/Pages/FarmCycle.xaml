@@ -1,0 +1,2434 @@
+﻿<UserControl x:Class="Warehouse_Manage.Pages.FarmCycle"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Warehouse_Manage.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="1100"
+             FlowDirection="RightToLeft"
+             xmlns:sys ="clr-namespace:System;assembly=mscorlib"
+             >
+
+    <UserControl.Resources>
+
+        <SolidColorBrush x:Key="PrimaryBlueColor" Color="#348ef6" />
+        <SolidColorBrush x:Key="SecondaryBlueColor" Color="#eff2ff" />
+
+
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="#ffffff" />
+        <SolidColorBrush x:Key="SecondaryTextColor" Color="#bbc1d1" />
+
+
+        <SolidColorBrush x:Key="PrimaryGrayColor" Color="#bbc1d1" />
+
+
+
+        <Style x:Key="buttonClose" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" Width="20" Height="20"
+                                
+                                 BorderThickness="0"  CornerRadius="2"
+                                 BorderBrush="DarkRed" Background="Red">
+                            <TextBlock Name="text" Margin="5,0,4,0" Text="X" Foreground="White" FontSize="15" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="DarkRed"/>
+                                <!--<Setter TargetName="text" Property="Foreground" Value="Black"/>-->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style  TargetType="TabItem">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBlueColor}"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Padding" Value="10 8"/>
+
+            <Setter Property="FontWeight" Value="Black"/>
+            <Setter Property="FontSize" Value="15"/>
+
+            <!--<Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>-->
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border CornerRadius="2"
+                                    Background="Transparent" Name="SelectedBorder"
+                                    BorderThickness="{TemplateBinding  BorderThickness}"
+                                    BorderBrush="{TemplateBinding  BorderBrush}"
+                                    Margin="5,2">
+                                <Border CornerRadius="2"
+                                    Background="{TemplateBinding  Background}"
+                                    BorderThickness="{TemplateBinding  BorderThickness}"
+                                    BorderBrush="{TemplateBinding  BorderBrush}"
+                                    Margin="1,1"
+                                    >
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="5"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="5"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  SnapsToDevicePixels="True"
+                                                  RecognizesAccessKey="True"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  ContentSource="Header"
+                                                  Focusable="True"
+                                                  />
+
+                                    </Grid>
+
+
+
+                                </Border>
+
+                            </Border>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Black"/>
+                                <Setter Property="Foreground" Value="{DynamicResource SecondaryBlueColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource PrimaryBlueColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+                                <Setter TargetName="SelectedBorder" Property="Background" Value="{DynamicResource PrimaryTextColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+
+        </Style>
+    </UserControl.Resources>
+
+
+    <Grid Background="White">
+        <Grid  Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition />
+                <RowDefinition Height="0"/>
+
+
+            </Grid.RowDefinitions>
+            <Button Content="اضافة دورة"   Grid.Row="0" Style="{StaticResource StandardButtonSound}" Name="AddNewCycle" Click="AddNewCycle_Click" />
+
+
+            <Border Margin="0" CornerRadius="3" Padding="5" Grid.Row="2" Style="{StaticResource ShadowBorder}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+
+
+                    <DataGrid  Name="DatagridCycle" Style="{StaticResource DataGridStyle }"   Grid.Row="2" >
+                        <DataGrid.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding EditUnitICommand}"/>
+                        </DataGrid.InputBindings>
+                        <DataGrid.Resources>
+
+
+
+                            <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                <Setter Property="Height" Value="50"/>
+
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate >
+                                            <Border CornerRadius="5" Background="#ECF2FF">
+                                                <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                            </Border>
+
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+
+
+
+
+                            </Style>
+
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+
+                            <DataGridTemplateColumn Header="تسلسل الدورة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding CycleID}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            
+                            <DataGridTemplateColumn Header="رقم الدورة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding FarmStrNumber}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="رقم المزرعة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding FarmID}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="اسم المزرعة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding FarmName}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            
+                            <DataGridTemplateColumn Header="تاريخ بداية الدورة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding DateStart}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            
+                            <DataGridTemplateColumn Header="تاريخ نهاية الدورة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding DateEnd}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            
+                            <DataGridTemplateColumn Header="تاريخ الاضافة" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <TextBlock HorizontalAlignment="Center" Text="{Binding DateEnter}" Style="{StaticResource textblockEdit}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn  Width="50">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+
+                                        <Button Click="EditCycle_Click" CommandParameter="{Binding .}" Name="EditCycle" HorizontalAlignment="Center" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+
+
+
+
+                            <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+
+
+
+
+        </Grid>
+
+        
+        <!--#region Mujahed-->
+        <!--<Grid Name="CycleDataview"  Background="White" Visibility="Hidden">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                <RowDefinition Height="{StaticResource MainLabelHeight}"/>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition  />
+
+
+                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+
+
+
+
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+
+
+                <ColumnDefinition/>
+
+                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Border Style="{StaticResource ShadowBorderHeader}"   Grid.ColumnSpan="19" Grid.RowSpan="2" />
+            --><!--Header Area--><!--
+            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="15"  FontSize="20"  Text="اضافة دورة جديدة"   Style="{StaticResource TitleHomePage}"/>
+
+            <StackPanel  Orientation="Horizontal"  Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Right">
+                <ToggleButton IsChecked="{Binding CreatenewstoreBool}"  Content="X" Height="30" Width="30"  Style="{StaticResource StandardButtonToggle}" Name="Close" Click="Close_Click" />
+
+            </StackPanel>
+
+
+            <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="1" >
+
+                <Button Content="الغاء الامر" Style="{StaticResource StandardButtonWhite}"  Width="90"  Height="30"  />
+                <Grid Width="15"/>
+                <Button Name="SaveData" Click="SaveData_Click" Content="تخزين" Style="{StaticResource StandardButtonSound}"    MinWidth="90" Height="30"/>
+
+
+            </StackPanel>
+
+            --><!--Header Area-->
+
+
+            <!--Content Area--><!--
+
+
+
+
+
+
+
+
+            <ScrollViewer Grid.Row="5" Grid.Column="1">
+
+
+
+
+                <StackPanel Margin="10">
+
+
+                    --><!--#region بيانات المزرعة --><!--
+
+
+                    <StackPanel>
+                        <StackPanel>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="15"  FontSize="20"  Text="بيانات المزرعة"   Style="{StaticResource TitleHomePage}"/>
+
+                            <Border Background="LightGray" Margin="0,10,0,0" VerticalAlignment="Bottom" CornerRadius="0" Style="{StaticResource ShadowBorderHeader}" Height="2" />
+                        </StackPanel>
+                        <Grid>
+                            <StackPanel Margin="0,10" Orientation="Horizontal">
+
+
+                                <TextBlock Text="اسم المزرعة" Style="{StaticResource textblockEdit}"/>
+                                <Grid Width="10"/>
+                                <ComboBox DisplayMemberPath="FarmName" MinWidth="100" Name="FarmName" Uid="اسم المزرعة" Style="{StaticResource MaterialDesignFilledComboBox}"/>
+                                <Grid Width="10"/>
+                                <TextBlock Text="رقم الدورة خلال السنة" Style="{StaticResource textblockEdit}"/>
+                                <Grid Width="10"/>
+                                <TextBox Uid="رقم الدورة خلال السنة" Style="{StaticResource EntryNewWithHint}"/>
+
+                            </StackPanel>
+
+                            <Button Content="اغلاق الدورة" HorizontalAlignment="Right" Style="{StaticResource StandardButtonClose}"/>
+                        </Grid>
+
+
+
+
+                    </StackPanel>
+
+
+                    --><!--#endregion -->
+
+
+
+
+                    <!--#region بيانات العمال --><!--
+
+                    <Expander Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="11" Style="{StaticResource ExpanderStyleNoCorner}"
+                           >
+
+                        <Expander.BorderBrush>
+                            <LinearGradientBrush Opacity="60"></LinearGradientBrush>
+                        </Expander.BorderBrush>
+                        <Expander.Header>
+                            <TextBlock Text="بيانات العمال" Style="{StaticResource ExpanderHeaderStyle}" />
+
+                        </Expander.Header>
+
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="188*" />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="128*"/>
+                                <ColumnDefinition Width="59*"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="187*"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="187*"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="187*"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="اسم العامل"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}" Margin="0,0,0,106"/>
+                            <TextBlock Text="تاريخ الاضافة" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}" Grid.ColumnSpan="2" Margin="0,0,0,106"/>
+                            <TextBlock Text="تاريخ الخروج" Grid.Row="1" Grid.Column="6" Style="{StaticResource textblockEdit}" Margin="0,0,0,106"/>
+                            <TextBlock Text="الحالة"        Grid.Row="1" Grid.Column="8" Style="{StaticResource textblockEdit}" Margin="0,0,0,106"/>
+
+                            <TextBox Name="txtEmployeename" Uid="اسم العامل"   Grid.Row="1" Grid.Column="1" Style="{StaticResource EntryNewWithHint}" Height="30" Margin="0,24,0,0" VerticalAlignment="Top"/>
+                            <DatePicker Name="txtDateadd" SelectedDate="{x:Static sys:DateTime.Now}" Uid="تاريخ الاضافة" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Height="30" Margin="0,24,0,0" VerticalAlignment="Top" />
+                            <DatePicker Name="txtDateRemove" SelectedDate="{x:Static sys:DateTime.Now}" Uid="تاريخ الخروج" Grid.Row="1" Grid.Column="6" Height="30" Margin="0,24,0,0" VerticalAlignment="Top" />
+                            <ComboBox Name="txtEmployeeState" Uid="الحالة"       Grid.Row="1" Grid.Column="8" Height="30" Margin="0,24,0,0" VerticalAlignment="Top" >
+                                <ComboBoxItem Content="يعمل"/>
+                                <ComboBoxItem Content="لا يعمل"/>
+                            </ComboBox>
+                            <Button Click="EmployeeAdd_Click" Name="EmployeeAdd" Content="اضافة"       Grid.Row="1" Grid.Column="10" Style="{StaticResource StandardButtonSound}" Height="30" Margin="0,24,0,0" VerticalAlignment="Top" />
+
+
+
+
+
+
+                            <DataGrid Name="EmployeeList"  Style="{StaticResource DataGridStyle }"   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="10"   Margin="0,60,0,-94" Grid.RowSpan="4">
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم العامل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding EmployeeID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="اسم العامل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding EmployeeName}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الاضافة" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الخروج" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateRemove}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="الحالة" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding State}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+
+
+                                    --><!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />--><!--
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </Expander>
+                    --><!--#endregion --><!--
+
+                    <Grid Height="20"/>
+
+
+
+
+                    --><!--#region بيانات الصوص --><!--
+
+
+                    <Expander Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="11" Style="{StaticResource ExpanderStyleNoCorner}"
+                           >
+
+                        <Expander.BorderBrush>
+                            <LinearGradientBrush Opacity="60"></LinearGradientBrush>
+                        </Expander.BorderBrush>
+                        <Expander.Header>
+                            <TextBlock Text="بيانات الصوص" Style="{StaticResource ExpanderHeaderStyle}" />
+
+                        </Expander.Header>
+
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد الصوص"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox x:Name="txtBirdNumber" Uid="عدد الصوص"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Name="txtBridDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnAddBird_Click" Name="btnAddBird" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+
+
+
+
+                            <DataGrid Name="BirdList"  Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد الصوص" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+
+                                    --><!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />--><!--
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </Expander>
+
+                    --><!--#endregion --><!--
+
+                    <Grid Height="20"/>
+
+                    --><!--#region بيانات الوفيات --><!--
+
+
+                    <Expander Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="11" Style="{StaticResource ExpanderStyleNoCorner}"
+                           >
+
+                        <Expander.BorderBrush>
+                            <LinearGradientBrush Opacity="60"></LinearGradientBrush>
+                        </Expander.BorderBrush>
+                        <Expander.Header>
+                            <TextBlock Text="بيانات الوفيات" Style="{StaticResource ExpanderHeaderStyle}" />
+
+                        </Expander.Header>
+
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد الوفيات"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtBirdDead" Uid="عدد الوفيات"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Name="txtbirddeadDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnBirdDead_Click" Name="btnBirdDead" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+
+
+
+
+                            <DataGrid  Name="BirdDeadList" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdsDeadID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد الوفيات" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdsDeadCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+
+                                    --><!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />--><!--
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </Expander>
+
+                    --><!--#endregion --><!--
+
+
+                    <Grid Height="20"/>
+
+                    --><!--#region بيانات العلف --><!--
+
+
+                    <Expander Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="11" Style="{StaticResource ExpanderStyleNoCorner}"
+                           >
+
+                        <Expander.BorderBrush>
+                            <LinearGradientBrush Opacity="60"></LinearGradientBrush>
+                        </Expander.BorderBrush>
+                        <Expander.Header>
+                            <TextBlock Text="بيانات العلف" Style="{StaticResource ExpanderHeaderStyle}" />
+
+                        </Expander.Header>
+
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد العلف"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtFeederCount" Uid="عدد العلف"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Name="txtFeederDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnFeederAdd_Click" Name="btnFeederAdd" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+
+
+
+
+                            <DataGrid  Name="ListFeeders" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding FeederID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد العلف" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding FeederCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+
+                                    --><!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />--><!--
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </Expander>
+
+                    --><!--#endregion --><!--
+
+                    <Grid Height="20"/>
+
+                    --><!--#region بيانات المياه --><!--
+
+
+                    <Expander Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="11" Style="{StaticResource ExpanderStyleNoCorner}"
+                           >
+
+                        <Expander.BorderBrush>
+                            <LinearGradientBrush Opacity="60"></LinearGradientBrush>
+                        </Expander.BorderBrush>
+                        <Expander.Header>
+                            <TextBlock Text="بيانات المياه" Style="{StaticResource ExpanderHeaderStyle}" />
+
+                        </Expander.Header>
+
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد المياه"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtWaterCount" Uid="عدد المياه"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Name="txtWaterDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnAddWater_Click" Name="btnAddWater" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+
+
+
+
+                            <DataGrid  Name="ListWaters" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding WaterID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد المياه" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding WaterCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+
+                                    --><!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />--><!--
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </Expander>
+
+                    --><!--#endregion --><!--
+
+                    <Grid Height="20"/>
+
+                    --><!--#region بيانات النجارة --><!--
+
+
+                    <Expander Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="11" Style="{StaticResource ExpanderStyleNoCorner}"
+                           >
+
+                        <Expander.BorderBrush>
+                            <LinearGradientBrush Opacity="60"></LinearGradientBrush>
+                        </Expander.BorderBrush>
+                        <Expander.Header>
+                            <TextBlock Text="بيانات النجارة" Style="{StaticResource ExpanderHeaderStyle}" />
+
+                        </Expander.Header>
+
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد النجارة"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtCarpentryCount" Uid="عدد النجارة"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Name="txtCarpentryDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnCarpentryAdd_Click" Name="btnCarpentryAdd" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+
+
+
+
+                            <DataGrid  Name="ListCarpentrys" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding CarpentryID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد النجارة" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding CarpentryCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+
+                                    --><!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />--><!--
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </Expander>
+
+                    --><!--#endregion --><!--
+
+
+
+
+                </StackPanel>
+
+            </ScrollViewer>
+
+
+
+
+
+
+
+
+
+
+        </Grid>-->
+
+
+        <!--#endregion-->
+
+
+
+        <Grid Name="CycleDataview"  Background="White" Visibility="Collapsed">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                <RowDefinition Height="{StaticResource MainLabelHeight}"/>
+                <RowDefinition Height="10" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition  Height="auto"/>
+                <RowDefinition Height="10" />
+                <RowDefinition  />
+
+
+                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+
+
+
+
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+
+
+                <ColumnDefinition/>
+
+                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Border Style="{StaticResource ShadowBorderHeader}"   Grid.ColumnSpan="19" Grid.RowSpan="2" />
+            <!--Header Area-->
+            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="15"  FontSize="20"  Text="اضافة دورة جديدة"   Style="{StaticResource TitleHomePage}"/>
+
+            <StackPanel  Orientation="Horizontal"  Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Right">
+                <ToggleButton IsChecked="{Binding CreatenewstoreBool}"  Content="X" Height="30" Width="30"  Style="{StaticResource StandardButtonToggle}" Name="Close" Click="Close_Click" />
+
+            </StackPanel>
+
+
+            <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="1" >
+
+                <Button Content="الغاء الامر" Style="{StaticResource StandardButtonWhite}"  Width="90"  Height="30"  />
+                <Grid Width="15"/>
+                <Button Name="SaveData" Click="SaveData_Click" Content="بداية دورة جديدة" Style="{StaticResource StandardButtonSound}"    MinWidth="90" Height="30" VerticalAlignment="Top" d:LayoutOverrides="Height"/>
+
+
+            </StackPanel>
+
+            <!--Header Area-->
+
+
+            <!--Content Area-->
+
+
+
+                    <!--#region بيانات المزرعة -->
+
+
+                <StackPanel Name="StackControl" Grid.Row="5" Grid.Column="1">
+                        <StackPanel>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="15"  FontSize="20"  Text="بيانات المزرعة"   Style="{StaticResource TitleHomePage}"/>
+
+                            <Border Background="LightGray" Margin="0,10,0,0" VerticalAlignment="Bottom" CornerRadius="0" Style="{StaticResource ShadowBorderHeader}" Height="2" />
+                        </StackPanel>
+                        <Grid>
+                            <StackPanel Margin="0,10" Orientation="Horizontal">
+
+
+                                <TextBlock Text="اسم المزرعة" Style="{StaticResource textblockEdit}"/>
+                                <Grid Width="10"/>
+                        <ComboBox SelectionChanged="FarmName_SelectionChanged" DisplayMemberPath="FarmName" MinWidth="100" Name="FarmName" Uid="اسم المزرعة" Style="{StaticResource MaterialDesignFilledComboBox}"/>
+                                <Grid Width="10"/>
+                                <TextBlock Text="رقم الدورة خلال السنة" Style="{StaticResource textblockEdit}"/>
+                                <Grid Width="10"/>
+                                <TextBox IsReadOnly="True" Name="txtCycleStrID" Uid="رقم الدورة خلال السنة" Style="{StaticResource EntryNewWithHint}" HorizontalAlignment="Left"/>
+
+                            </StackPanel>
+
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="تاريخ بداية الدورة" Style="{StaticResource textblockEdit}"/>
+                        <Grid Width="10"/>
+                        <DatePicker SelectedDate="{x:Static sys:DateTime.Now}" Name="txtDateStartCycle" VerticalAlignment="Center"/>
+                        <Grid Width="10"/>
+                        <CheckBox  Name="btnCloseCycle" Content="اغلاق الدورة"  />
+                        <Grid Visibility="{Binding ElementName=btnCloseCycle,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}" Width="10"/>
+                        <TextBlock Text="تاريخ اغلاق الدورة" Style="{StaticResource textblockEdit}" Visibility="{Binding ElementName=btnCloseCycle,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <Grid Width="10"/>
+                        <DatePicker SelectedDate="{x:Static sys:DateTime.Now}" Name="txtDateEndCycle" VerticalAlignment="Center" Visibility="{Binding ElementName=btnCloseCycle,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
+
+                        </Grid>
+
+
+
+
+                    </StackPanel>
+
+
+                    <!--#endregion -->
+
+
+
+            <Grid Grid.Row="7" Grid.Column="1">
+                <TabControl Name="ExtraData" IsEnabled="False" >
+                    <TabItem Header="بيانات العمال">
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition  />
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition MaxWidth="100"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            
+
+
+
+                            <TextBlock Text="اسم العامل"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}" />
+                            <TextBlock Text="تاريخ الاضافة" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"  />
+                            <TextBlock Text="تاريخ الخروج" Grid.Row="1" Grid.Column="5" Style="{StaticResource textblockEdit}" />
+                            <TextBlock Text="الحالة"        Grid.Row="1" Grid.Column="7" Style="{StaticResource textblockEdit}" />
+
+                            <TextBox Name="txtEmployeename" Uid="اسم العامل"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}" />
+                            <DatePicker Width="120" Foreground="Black" Name="txtDateadd" SelectedDate="{x:Static sys:DateTime.Now}"  Grid.Row="3" Grid.Column="3"  />
+                            <DatePicker Width="120" Foreground="Black" Name="txtDateRemove" SelectedDate="{x:Static sys:DateTime.Now}"  Grid.Row="3" Grid.Column="5"  />
+                            <ComboBox Foreground="Black" Name="txtEmployeeState" Uid="الحالة"       Grid.Row="3" Grid.Column="7"  >
+                                <ComboBoxItem Content="يعمل"/>
+                                <ComboBoxItem Content="لا يعمل"/>
+                            </ComboBox>
+                            <Button Click="EmployeeAdd_Click" Name="EmployeeAdd" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}"  />
+
+
+
+                            <Grid Name="GridHideControll" Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Grid.RowSpan="5" Background="White"/>
+
+
+
+
+
+                            <DataGrid Name="EmployeeList" Foreground="Black"  Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="10"  Grid.RowSpan="4">
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم العامل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding EmployeeID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="اسم العامل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding EmployeeName}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الاضافة" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الخروج" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateRemove}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="الحالة" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding State}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn  Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <Button Click="Delete_Click"  CommandParameter="{Binding .}" FontFamily="Employees" Background="Red" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </TabItem>
+
+                    <TabItem Header="بيانات الصوص">
+
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد الصوص"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox x:Name="txtBirdNumber" Uid="عدد الصوص"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker  Foreground="Black"  HorizontalAlignment="Left" Name="txtBridDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" Width="120" />
+                            <Button Click="btnAddBird_Click" Name="btnAddBird" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" Height="30" VerticalAlignment="Bottom" />
+
+
+                            <Grid  Visibility="{Binding ElementName=GridHideControll,Path=Visibility}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Grid.RowSpan="5" Background="White"/>
+
+
+
+
+                            <DataGrid Name="BirdList"  Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9" >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد الصوص" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd,StringFormat=yyyy/MM/dd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn  Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <Button Click="Delete_Click"  CommandParameter="{Binding .}" FontFamily="Birds" Background="Red" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+                                    <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+
+                    </TabItem>
+
+                    <TabItem Header="بيانات الوفيات">
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد الوفيات"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtBirdDead" Uid="عدد الوفيات"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Width="120" Foreground="Black" Name="txtbirddeadDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnBirdDead_Click" Name="btnBirdDead" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+                            <Grid  Visibility="{Binding ElementName=GridHideControll,Path=Visibility}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Grid.RowSpan="5" Background="White"/>
+
+
+
+
+                            <DataGrid  Name="BirdDeadList" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdsDeadID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد الوفيات" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding BirdsDeadCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn  Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <Button Click="Delete_Click"  CommandParameter="{Binding .}" FontFamily="BirdDead" Background="Red" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+                                    <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </TabItem>
+
+                    <TabItem Header="بيانات العلف">
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد العلف"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtFeederCount" Uid="عدد العلف"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Width="120" Foreground="Black" Name="txtFeederDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnFeederAdd_Click" Name="btnFeederAdd" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" />
+
+
+
+                            <Grid  Visibility="{Binding ElementName=GridHideControll,Path=Visibility}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Grid.RowSpan="5" Background="White"/>
+
+
+
+                            <DataGrid  Name="ListFeeders" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding FeederID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد العلف" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding FeederCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn  Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <Button Click="Delete_Click"  CommandParameter="{Binding .}" FontFamily="Feeders" Background="Red" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+                                    <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </TabItem>
+
+                    <TabItem Header="بيانات المياه">
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد المياه"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtWaterCount" Uid="عدد المياه"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Width="120" Foreground="Black" Name="txtWaterDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnAddWater_Click" Name="btnAddWater" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" Height="30" VerticalAlignment="Top" />
+
+
+                            <Grid  Visibility="{Binding ElementName=GridHideControll,Path=Visibility}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Grid.RowSpan="5" Background="White"/>
+
+
+
+
+                            <DataGrid  Name="ListWaters" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding WaterID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد المياه" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding WaterCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn  Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <Button Click="Delete_Click"  CommandParameter="{Binding .}" FontFamily="Waters" Background="Red" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+
+                                    <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </TabItem>
+
+                    <TabItem Header="بيانات النجارة">
+                        <Grid Background="White">
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="{StaticResource SpaceShapeRow}"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="{StaticResource RowFirstHeight}"/>
+                            </Grid.RowDefinitions>
+
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsSpaceMargin}"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Text="عدد النجارة"   Grid.Row="1" Grid.Column="1" Style="{StaticResource textblockEdit}"/>
+                            <TextBlock Text="تاريخ الادخال" Grid.Row="1" Grid.Column="3" Style="{StaticResource textblockEdit}"/>
+
+                            <TextBox Name="txtCarpentryCount" Uid="عدد النجارة"   Grid.Row="3" Grid.Column="1" Style="{StaticResource EntryNewWithHint}"/>
+                            <DatePicker Width="120" Foreground="Black" Name="txtCarpentryDate" SelectedDate="{x:Static sys:DateTime.Now}" Grid.Row="3" Grid.Column="3" />
+                            <Button Click="btnCarpentryAdd_Click" Name="btnCarpentryAdd" Content="اضافة"       Grid.Row="3" Grid.Column="9" Style="{StaticResource StandardButtonSound}" Height="30" VerticalAlignment="Bottom" />
+
+
+                            <Grid  Visibility="{Binding ElementName=GridHideControll,Path=Visibility}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Grid.RowSpan="5" Background="White"/>
+
+
+
+
+                            <DataGrid  Name="ListCarpentrys" Style="{StaticResource DataGridStyle }"   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="9"  >
+
+                                <DataGrid.Resources>
+
+
+
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+
+                                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        <Setter Property="Height" Value="50"/>
+
+
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate >
+                                                    <Border CornerRadius="5" Background="#ECF2FF">
+                                                        <TextBlock Margin="5,0" Text="{Binding }"
+                                               FontSize="14"
+                                               FontFamily="Nunito Sans"
+                                               FontWeight="SemiBold"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                                         
+                                               />
+
+                                                    </Border>
+
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+
+
+
+
+                                    </Style>
+
+                                </DataGrid.Resources>
+
+                                <DataGrid.Columns>
+
+
+                                    <DataGridTemplateColumn Header="رقم تسلسل" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding CarpentryID}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+                                    <DataGridTemplateColumn Header="عدد النجارة" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding CarpentryCount}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="تاريخ الادخال" >
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <TextBlock HorizontalAlignment="Center" Text="{Binding DateAdd}" Style="{StaticResource textblockEdit}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn  Width="50">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+
+                                                <Button Click="Delete_Click"  CommandParameter="{Binding .}" FontFamily="Carpentrys" Background="Red" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+
+
+                                    <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
+                            <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
+                            <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
+                            <DataGridTextColumn Header="{Binding Fax,Source={StaticResource MVVM}}"             />
+                            <DataGridTextColumn Header="{Binding IDColumn,Source={StaticResource MVVM}}"              />
+                            <DataGridTextColumn Header="{Binding OpeningBalance,Source={StaticResource MVVM}}" />
+
+                            <DataGridTextColumn Header="{Binding Paymentpreferd,Source={StaticResource MVVM}}" />
+                            <DataGridTextColumn Header="{Binding Street,Source={StaticResource MVVM}}"     />
+                            <DataGridTextColumn Header="{Binding Townid,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Twitter,Source={StaticResource MVVM}}"         />
+                            <DataGridTextColumn Header="{Binding Email,Source={StaticResource MVVM}}"           />
+                            <DataGridTextColumn Header="{Binding Mobile,Source={StaticResource MVVM}}"          />
+                            <DataGridTextColumn Header="{Binding Note,Source={StaticResource MVVM}}"           />-->
+
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+
+                        </Grid>
+
+                    </TabItem>
+
+                </TabControl>
+            </Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </Grid>
+
+    </Grid>
+</UserControl>

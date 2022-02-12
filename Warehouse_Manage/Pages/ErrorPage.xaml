@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Warehouse_Manage.Pages.ErrorPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Warehouse_Manage.Pages" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="White">
+        <Button  Click="btnCLose_Click" x:Name="btnCLose" Uid="1" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
+            <materialDesign:PackIcon Kind="Power" Foreground="Red" Width="25" Height="25" />
+        </Button>
+
+        <TextBlock FlowDirection="RightToLeft" FontWeight="Bold" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Mujahed" Name="txtError"/>
+    </Grid>
+</UserControl>
