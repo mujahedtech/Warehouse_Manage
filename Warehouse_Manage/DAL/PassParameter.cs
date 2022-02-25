@@ -8,6 +8,37 @@ using System.Threading.Tasks;
 
 namespace Warehouse_Manage.DAL
 {
+
+    public class Validations
+    {
+        public static bool IsNumeric(string input)
+        {
+            decimal test = 0;
+            return decimal.TryParse(input, out test);
+        }
+
+
+        public static bool IsDate(string input)
+        {
+            DateTime test;
+            return DateTime.TryParse(input, out test);
+        }
+
+
+        public static bool IsDouble(string input)
+        {
+            double test;
+            return double.TryParse(input, out test);
+        }
+
+        public static bool Isdecimal(string input)
+        {
+            decimal test;
+            return decimal.TryParse(input, out test);
+        }
+    }
+
+
     class PassParameter
     {
 
@@ -22,29 +53,27 @@ namespace Warehouse_Manage.DAL
         public static ObservableCollection<Tables.Waters> Waters { get; set; } = new ObservableCollection<Tables.Waters>();
         public static ObservableCollection<Tables.Carpentrys> Carpentrys { get; set; } = new ObservableCollection<Tables.Carpentrys>();
 
+        public static ObservableCollection<Tables.Electricity> Electricity { get; set; } = new ObservableCollection<Tables.Electricity>();
+        public static ObservableCollection<Tables.Maintenance> Maintenance { get; set; } = new ObservableCollection<Tables.Maintenance>();
+        public static ObservableCollection<Tables.Miscellaneous> Miscellaneous { get; set; } = new ObservableCollection<Tables.Miscellaneous>();
+        public static ObservableCollection<Tables.Fuel> Fuel { get; set; } = new ObservableCollection<Tables.Fuel>();
 
 
 
-        static SQLiteAsyncConnection connection;
-        public static SQLiteAsyncConnection _connection
-        {
-            get
-            {
-                return connection;
-            }
-            set
-            {
-                connection = value;
-            }
-        }
-        public PassParameter()
+
+
+        public  static DateTime GetDateWithCurrentTime(DateTime dateTime)
         {
 
-
-           
-
-
+          return  new DateTime(
+                             dateTime.Year,
+                            dateTime.Month,
+                            dateTime.Day,
+                           DateTime.Now.Hour,
+                             DateTime.Now.Minute,
+                              DateTime.Now.Second);
         }
+
 
     }
 }

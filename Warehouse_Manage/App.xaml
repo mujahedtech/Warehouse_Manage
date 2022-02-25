@@ -15,6 +15,9 @@
             </ResourceDictionary.MergedDictionaries>
 
 
+
+
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
             <!--Old Color-->
             <!--<SolidColorBrush x:Key="MainColor">#FF22849C</SolidColorBrush>-->
 

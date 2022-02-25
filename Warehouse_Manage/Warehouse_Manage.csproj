@@ -116,10 +116,14 @@
     <Compile Include="Tables\Birds.cs" />
     <Compile Include="Tables\BirdsDead.cs" />
     <Compile Include="Tables\Carpentrys.cs" />
+    <Compile Include="Tables\Electricity.cs" />
     <Compile Include="Tables\Employees.cs" />
     <Compile Include="Tables\Farms.cs" />
     <Compile Include="Tables\FarmsCycle.cs" />
     <Compile Include="Tables\Feeders.cs" />
+    <Compile Include="Tables\Fuel.cs" />
+    <Compile Include="Tables\Maintenance.cs" />
+    <Compile Include="Tables\Miscellaneous.cs" />
     <Compile Include="Tables\Waters.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -191,6 +195,9 @@
     <Content Include="CheckClick.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Reports\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.3.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.3.0\build\MaterialDesignThemes.targets')" />

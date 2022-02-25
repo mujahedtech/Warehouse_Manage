@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Warehouse_Manage.Tables
 {
-    class Employees
+    class Maintenance
     {
+        public Guid MaintenanceID { get; set; }
 
-        public Guid EmployeeID { get; set; }
         public int cycleID { get; set; }
         public int FarmID { get; set; }
-        public string EmployeeName { get; set; }
+
+        public double MaintenanceCost { get; set; }
         public DateTime DateAdd { get; set; }
-        public DateTime DateRemove { get; set; }
-        public string State { get; set; }
-        public double Salary { get; set; }
+
+        public string Notes { get; set; }
 
     }
 }

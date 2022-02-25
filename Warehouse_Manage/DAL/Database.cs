@@ -19,7 +19,7 @@ namespace Warehouse_Manage.DAL
 
 
         private string Path = "MujahedTech.db3";
-        public Database(string dbpath="")
+        public Database(string dbpath = "")
         {
             dbpath = Path;
             _database = new SQLiteAsyncConnection(dbpath);
@@ -32,6 +32,10 @@ namespace Warehouse_Manage.DAL
             _database.CreateTableAsync<Tables.Feeders>();
             _database.CreateTableAsync<Tables.Waters>();
             _database.CreateTableAsync<Tables.Carpentrys>();
+            _database.CreateTableAsync<Tables.Electricity>();
+            _database.CreateTableAsync<Tables.Maintenance>();
+            _database.CreateTableAsync<Tables.Miscellaneous>();
+            _database.CreateTableAsync<Tables.Fuel>();
 
         }
 
@@ -65,7 +69,7 @@ namespace Warehouse_Manage.DAL
         public Task<List<Tables.FarmsCycle>> GetFarmsCycles_Linq()
         {
 
-            return _database.Table<Tables.FarmsCycle>().Where(i=>i.CycleID==1).ToListAsync();
+            return _database.Table<Tables.FarmsCycle>().Where(i => i.CycleID == 1).ToListAsync();
         }
 
         public Task<List<Tables.FarmsCycle>> GetFarmsCycles()
@@ -89,7 +93,7 @@ namespace Warehouse_Manage.DAL
 
         #region Employee
 
-       
+
         public Task<int> SaveEmployeeAsync(List<Tables.Employees> employees)
         {
             return _database.InsertAllAsync(employees);
@@ -107,7 +111,7 @@ namespace Warehouse_Manage.DAL
 
         #region Birds
 
-       
+
         public Task<int> SaveBirdAsync(List<Tables.Birds> birds)
         {
             return _database.InsertAllAsync(birds);
@@ -183,5 +187,71 @@ namespace Warehouse_Manage.DAL
 
         }
         #endregion
+
+
+        #region Electricity
+
+        public Task<int> SaveElectricityAsync(List<Tables.Electricity> electricity)
+        {
+            return _database.InsertAllAsync(electricity);
+
+        }
+        public Task<List<Tables.Electricity>> DeleteElectricityAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Electricity>($"delete from Electricity where cycleID={CycleID}");
+
+        }
+
+        #endregion
+
+        #region Maintenance
+
+        public Task<int> SaveMaintenanceAsync(List<Tables.Maintenance> electricity)
+        {
+            return _database.InsertAllAsync(electricity);
+
+        }
+        public Task<List<Tables.Maintenance>> DeleteMaintenanceAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Maintenance>($"delete from Maintenance where cycleID={CycleID}");
+
+        }
+
+
+
+        #endregion
+
+
+        #region Miscellaneous
+
+        public Task<int> SaveMiscellaneousAsync(List<Tables.Miscellaneous> Miscellaneous)
+        {
+            return _database.InsertAllAsync(Miscellaneous);
+
+        }
+        public Task<List<Tables.Miscellaneous>> DeleteMiscellaneousAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Miscellaneous>($"delete from Miscellaneous where cycleID={CycleID}");
+
+        }
+
+        #endregion
+
+
+        #region Fuel
+
+        public Task<int> SaveFuelAsync(List<Tables.Fuel> Fuel)
+        {
+            return _database.InsertAllAsync(Fuel);
+
+        }
+        public Task<List<Tables.Fuel>> DeleteFuelAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Fuel>($"delete from Fuel where cycleID={CycleID}");
+
+        }
+
+        #endregion
+
     }
 }

@@ -15,6 +15,10 @@ namespace Warehouse_Manage.Tables
         public int FarmID { get; set; }
         public double FeederCount { get; set; }
         public DateTime DateAdd { get; set; }
+        public string FeederType { get; set; }
+        public double CostPrice { get; set; }
+
+        public double TotalCost { get; set; }
 
 
     }

@@ -25,6 +25,11 @@ namespace Warehouse_Manage.Tables
         public DateTime DateEnd { get; set; }
         public bool CycleClose  { get; set; }
 
+        public string FarmSupervisor { get; set; }
+
+
+        
+
 
 
     }

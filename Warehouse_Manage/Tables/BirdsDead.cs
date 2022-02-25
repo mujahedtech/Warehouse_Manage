@@ -17,5 +17,9 @@ namespace Warehouse_Manage.Tables
         public double BirdsDeadCount { get; set; }
         public DateTime DateAdd { get; set; }
 
+        public double CostPrice { get; set; }
+
+        public double TotalCost { get; set; }
+
     }
 }

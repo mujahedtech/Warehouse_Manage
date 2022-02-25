@@ -10,18 +10,7 @@ namespace Warehouse_Manage.DAL
     class Queries
     {
 
-      public async Task<ObservableCollection<Tables.Farms>> GetFarms()
-        {
-
-
-            var Accounts = await  DAL.PassParameter._connection.Table<Tables.Farms>().ToListAsync();
-
-            var _UsersAccounts = new ObservableCollection<Tables.Farms>(Accounts);
-
-
-
-            return _UsersAccounts;
-        }
+     
 
 
     }

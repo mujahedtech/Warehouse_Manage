@@ -28,8 +28,9 @@ namespace Warehouse_Manage.Pages
         public DateTime DateEnter { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
-        public bool CycleClose  { get; set; }
+        public bool CycleClose { get; set; }
         public string FarmName { get; set; }
+        public string FarmSupervisor { get; set; }
 
 
     }
@@ -46,11 +47,14 @@ namespace Warehouse_Manage.Pages
 
             Farms_LoadedAsync();
 
-           
+            CycleDataview.Visibility = Visibility.Collapsed;
+
+
+
         }
 
 
-       
+
 
         private async void Farms_LoadedAsync()
         {
@@ -66,7 +70,7 @@ namespace Warehouse_Manage.Pages
 
 
             var results = from FarmsTBL in await new DAL.Database("").GetFarms()
-                          join FarmsCyclesTBL in await new DAL.Database("").GetFarmsCycles() on FarmsTBL.FarmID equals FarmsCyclesTBL.FarmID 
+                          join FarmsCyclesTBL in await new DAL.Database("").GetFarmsCycles() on FarmsTBL.FarmID equals FarmsCyclesTBL.FarmID
                           select new JoinCycle
                           {
                               CycleID = FarmsCyclesTBL.CycleID,
@@ -74,11 +78,12 @@ namespace Warehouse_Manage.Pages
 
 
                               FarmStrNumber = FarmsCyclesTBL.FarmStrNumber,
-                              DateEnter =(DateTime) FarmsCyclesTBL.DateEnter,
-                              DateStart= (DateTime)FarmsCyclesTBL.DateStart,
+                              DateEnter = (DateTime)FarmsCyclesTBL.DateEnter,
+                              DateStart = (DateTime)FarmsCyclesTBL.DateStart,
                               DateEnd = (DateTime)FarmsCyclesTBL.DateEnd,
                               FarmName = FarmsTBL.FarmName,
-                              CycleClose= FarmsCyclesTBL.CycleClose
+                              CycleClose = FarmsCyclesTBL.CycleClose,
+                              FarmSupervisor = FarmsCyclesTBL.FarmSupervisor
 
                           };
 
@@ -87,30 +92,35 @@ namespace Warehouse_Manage.Pages
 
 
 
-            DatagridCycle.ItemsSource = results.ToList().OrderBy(i=>i.CycleID);
+            DatagridCycle.ItemsSource = results.ToList().OrderBy(i => i.CycleID);
 
 
-            txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = "";
+            txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = txtFarmSupervisor.Text = "";
         }
 
-      
+
 
         private void AddNewCycle_Click(object sender, RoutedEventArgs e)
         {
-            txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = "";
+            btnCloseCycle.Visibility = Visibility.Collapsed;
+            ExtraData.SelectedIndex = 0;
+
+            txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = txtFarmSupervisor.Text = "";
             CycleDataview.Visibility = Visibility.Visible;
 
             SaveData.Content = "بداية دورة جديدة";
             ExtraData.IsEnabled = false;
 
-            txtCycleStrID.Text = "";FarmName.SelectedIndex = -1;
+            txtCycleStrID.Text = ""; FarmName.SelectedIndex = -1;
 
-            DAL.PassParameter.EmployeesList =new ObservableCollection<Tables.Employees>();
+            DAL.PassParameter.EmployeesList = new ObservableCollection<Tables.Employees>();
             DAL.PassParameter.BirdsList = new ObservableCollection<Tables.Birds>();
             DAL.PassParameter.BirdsDead = new ObservableCollection<Tables.BirdsDead>();
             DAL.PassParameter.Feeders = new ObservableCollection<Tables.Feeders>();
             DAL.PassParameter.Waters = new ObservableCollection<Tables.Waters>();
             DAL.PassParameter.Carpentrys = new ObservableCollection<Tables.Carpentrys>();
+            DAL.PassParameter.Maintenance = new ObservableCollection<Tables.Maintenance>();
+            DAL.PassParameter.Electricity = new ObservableCollection<Tables.Electricity>();
 
             GridHideControll.Visibility = Visibility.Collapsed;
             SaveData.Visibility = Visibility.Visible;
@@ -134,14 +144,18 @@ namespace Warehouse_Manage.Pages
         bool UpdateMode { get; set; } = false;
         JoinCycle SelectedFarmsCycle = new JoinCycle();
 
-      
+
 
         private async void EditCycle_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as System.Windows.Controls.Button;
             var Check = button.CommandParameter as JoinCycle;
 
-           
+            ExtraData.SelectedIndex = 0;
+
+            btnCloseCycle.Visibility = Visibility.Visible;
+
+            txtFarmSupervisor.Text = Check.FarmSupervisor;
 
             GridHideControll.Visibility = Visibility.Collapsed;
             SaveData.Visibility = Visibility.Visible;
@@ -162,7 +176,7 @@ namespace Warehouse_Manage.Pages
                 SaveData.Visibility = Visibility.Collapsed;
             }
 
-           
+
 
             UpdateMode = true;
 
@@ -184,7 +198,7 @@ namespace Warehouse_Manage.Pages
             //تفعيل ادخال بيانات اضافية
             ExtraData.IsEnabled = true;
 
-           
+
             //جلب بيانات العمال المدخلين سابقا على الدورة
             var DataEmployees = await new DAL.Database()._database.QueryAsync<Tables.Employees>("select * from Employees");
 
@@ -261,28 +275,65 @@ namespace Warehouse_Manage.Pages
 
 
 
+            //جلب بيانات الكهرباء المدخلين سابقا على الدورة
+            var DataElectricity = await new DAL.Database()._database.Table<Tables.Electricity>().Where(i=>i.cycleID== Check.CycleID).OrderBy(i => i.ElectricityID).ToListAsync();
+
+            DAL.PassParameter.Electricity = new ObservableCollection<Tables.Electricity>(DataElectricity);
+
+            //ترتيب بيانات الكهرباء المدخلين سابقا
+            ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
+
+
+
+            //جلب بيانات الصيانة المدخلين سابقا على الدورة
+            var DataMaintenance = await new DAL.Database()._database.Table<Tables.Maintenance>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.MaintenanceID).ToListAsync();
+
+            DAL.PassParameter.Maintenance = new ObservableCollection<Tables.Maintenance>(DataMaintenance);
+
+            //ترتيب بيانات الصيانة المدخلين سابقا
+            ListMaintenance.ItemsSource = DAL.PassParameter.Maintenance;
+
+
+
+            //جلب بيانات الصيانة المدخلين سابقا على الدورة
+            var DataMiscellaneous = await new DAL.Database()._database.Table<Tables.Miscellaneous>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.MiscellaneousID).ToListAsync();
+
+            DAL.PassParameter.Miscellaneous = new ObservableCollection<Tables.Miscellaneous>(DataMiscellaneous);
+
+            //ترتيب بيانات النجارة المدخلين سابقا
+            ListMiscellaneous.ItemsSource = DAL.PassParameter.Miscellaneous;
+
+
+
+
             //عرض الواجهة
             CycleDataview.Visibility = Visibility.Visible;
         }
 
         private async void SaveData_Click(object sender, RoutedEventArgs e)
         {
+
+            if (FarmName.SelectedItem == null)
+            {
+                MessageBox.Show("الرجاء اختيار اسم  المزرعة");
+                return;
+            }
+            if (txtFarmSupervisor.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال اسم مشرف المزرعة");
+                return;
+            }
+
             if (FarmName.SelectedItem != null)
             {
                 Tables.FarmsCycle farmsCycle;
 
 
-                DateTime CycleStartDateTime = new DateTime(
-                         DateTime.Parse(txtDateStartCycle.SelectedDate.ToString()).Year,
-                         DateTime.Parse(txtDateStartCycle.SelectedDate.ToString()).Month,
-                         DateTime.Parse(txtDateStartCycle.SelectedDate.ToString()).Day,
-                       DateTime.Now.Hour,
-                         DateTime.Now.Minute,
-                          DateTime.Now.Second);
+               
 
-                if (UpdateMode==true)
+                if (UpdateMode == true)
                 {
-                    if (FarmName.SelectedItem!=null)
+                    if (FarmName.SelectedItem != null)
                     {
                         var data = (Tables.Farms)FarmName.SelectedItem;
 
@@ -295,7 +346,7 @@ namespace Warehouse_Manage.Pages
                              DateTime.Now.Second);
 
 
-                       
+
 
 
                         farmsCycle = new Tables.FarmsCycle
@@ -303,13 +354,14 @@ namespace Warehouse_Manage.Pages
                             CycleID = SelectedFarmsCycle.CycleID,
                             FarmID = data.FarmID,
                             FarmStrNumber = txtCycleStrID.Text,
-                            DateStart = CycleStartDateTime,
-                            CycleClose= (bool)btnCloseCycle.IsChecked?true:false,
-                            DateEnd= (bool)btnCloseCycle.IsChecked ? CycleEndDateTime : new DateTime(1,1,1),
-                            DateEnter= SelectedFarmsCycle.DateEnter
+                            DateStart = DAL.PassParameter.GetDateWithCurrentTime(txtDateStartCycle.SelectedDate.Value),
+                            CycleClose = (bool)btnCloseCycle.IsChecked ? true : false,
+                            DateEnd = (bool)btnCloseCycle.IsChecked ? CycleEndDateTime : new DateTime(1, 1, 1),
+                            DateEnter = SelectedFarmsCycle.DateEnter,
+                            FarmSupervisor = txtFarmSupervisor.Text
                         };
 
-                       
+
 
                         //تحديث بيانات الدورة
                         await new DAL.Database("").UpdateFarmsCycleAsync(farmsCycle);
@@ -354,7 +406,7 @@ namespace Warehouse_Manage.Pages
 
 
 
-                         //حذف بيانات المياه السابقة من اجل ادخال البياناتا لجديدة
+                        //حذف بيانات المياه السابقة من اجل ادخال البياناتا لجديدة
                         await new DAL.Database("").DeleteWatersAsync(SelectedFarmsCycle.CycleID);
 
                         //ادخال بيانات المياه الجديدة
@@ -369,26 +421,50 @@ namespace Warehouse_Manage.Pages
                         await new DAL.Database("").SaveCarpentrysAsync(DAL.PassParameter.Carpentrys.ToList());
 
 
+
+                        //حذف بيانات الكهرباء السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeleteElectricityAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات الكهرباء الجديدة
+                        await new DAL.Database("").SaveElectricityAsync(DAL.PassParameter.Electricity.ToList());
+
+
+
+                        //حذف بيانات الصيانة السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeleteMaintenanceAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات الصيانة الجديدة
+                        await new DAL.Database("").SaveMaintenanceAsync(DAL.PassParameter.Maintenance.ToList());
+
+
+                        //حذف بيانات المتفرقة السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeleteMiscellaneousAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات المتفرقة الجديدة
+                        await new DAL.Database("").SaveMiscellaneousAsync(DAL.PassParameter.Miscellaneous.ToList());
+
+
                         CycleDataview.Visibility = Visibility.Collapsed;
-                       
+
                         Farms_LoadedAsync();
                         return;
                     }
 
-                   
+
                 }
 
 
                 var SelectedFarm = (Tables.Farms)FarmName.SelectedItem;
 
-                 farmsCycle = new Tables.FarmsCycle
+                farmsCycle = new Tables.FarmsCycle
                 {
                     CycleIDGuid = Guid.NewGuid(),
                     FarmID = SelectedFarm.FarmID,
                     FarmStrNumber = txtCycleStrID.Text,
                     DateEnter = DateTime.Now,
-                    DateStart = CycleStartDateTime
-                 };
+                    DateStart = DAL.PassParameter.GetDateWithCurrentTime(txtDateStartCycle.SelectedDate.Value),
+                    FarmSupervisor = txtFarmSupervisor.Text
+                };
 
 
 
@@ -400,61 +476,128 @@ namespace Warehouse_Manage.Pages
 
                 CycleDataview.Visibility = Visibility.Collapsed;
 
-              
+
 
                 Farms_LoadedAsync();
 
             }
 
-              
+
 
 
         }
 
         private void EmployeeAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (txtEmployeename.Text ==""||txtEmployeeState.Text == ""|| txtEmployeeState.SelectedIndex == -1)
+            if (txtEmployeename.Text == "" || txtEmployeeState.Text == "" || txtEmployeeState.SelectedIndex == -1||txtEmployeeSalary.Text=="")
             {
                 MessageBox.Show("الرجاء ادخال البيانات بشكل كافي");
                 return;
             }
-            DAL.PassParameter.EmployeesList.Add(new Tables.Employees { EmployeeID=Guid.NewGuid(),
-                EmployeeName=txtEmployeename.Text,
-                DateAdd=DateTime.Parse(txtDateadd.Text),
-                DateRemove= DateTime.Parse(txtDateRemove.Text) ,
-                State=txtEmployeeState.Text,
-                FarmID= SelectedFarmsCycle.FarmID,
-                cycleID= SelectedFarmsCycle.CycleID
+
+           else if (DAL.Validations.IsDate(txtDateadd.SelectedDate.Value.ToString())==false)
+            {
+                MessageBox.Show("الرجاء ادخال تاريخ الاضافة بشكل صحيح بشكل كافي");
+                return;
+            }
+           else if (DAL.Validations.IsDate(txtDateRemove.SelectedDate.Value.ToString()) == false)
+            {
+                MessageBox.Show("الرجاء ادخال تاريخ الخروج بشكل صحيح بشكل كافي");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtEmployeeSalary.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال راتب العامل بشكل صحيح");
+                return;
+            }
+
+            if (UpdateEmployee)
+            {
+
+                DAL.PassParameter.EmployeesList[EditEmployeeIndex] = new Tables.Employees
+                { cycleID = SelectedEmployee.cycleID,
+                    FarmID= SelectedEmployee.FarmID,
+                    EmployeeID= SelectedEmployee.EmployeeID,
+                    EmployeeName = txtEmployeename.Text,
+                    DateAdd = DAL.PassParameter.GetDateWithCurrentTime(txtDateadd.SelectedDate.Value),
+                    DateRemove = DAL.PassParameter.GetDateWithCurrentTime(txtDateRemove.SelectedDate.Value),
+                    State = txtEmployeeState.Text,
+                    Salary=double.Parse( txtEmployeeSalary.Text)
+                   
+                };
+
+                EmployeeAdd.Content = "اضافة";
+
+                txtEmployeename.Text = txtEmployeeState.Text = txtEmployeeSalary.Text = "";
+                txtEmployeeState.SelectedIndex = -1;
+
+                EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
+                UpdateEmployee = false;
+
+                return; 
+            }
+
+          
+            DAL.PassParameter.EmployeesList.Add(new Tables.Employees
+            {
+                EmployeeID = Guid.NewGuid(),
+                EmployeeName = txtEmployeename.Text,
+                DateAdd = DateTime.Parse(txtDateadd.Text),
+                DateRemove = DateTime.Parse(txtDateRemove.Text),
+                State = txtEmployeeState.Text,
+                FarmID = SelectedFarmsCycle.FarmID,
+                cycleID = SelectedFarmsCycle.CycleID,
+                Salary = double.Parse(txtEmployeeSalary.Text)
             });
 
-            txtEmployeename.Text = txtEmployeeState.Text = "";
+            txtEmployeename.Text = txtEmployeeState.Text =txtEmployeeSalary.Text = "";
             txtEmployeeState.SelectedIndex = -1;
 
 
 
 
-            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList;
+            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
         }
 
         private void btnAddBird_Click(object sender, RoutedEventArgs e)
         {
 
 
-            if (txtBirdNumber.Text == "" )
+            if (txtBirdNumber.Text == "")
             {
                 MessageBox.Show("الرجاء ادخال عدد الصوص");
                 return;
             }
+            else if (txtCostBird.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة الصوص");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtBirdNumber.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال عدد الصوص بشكل صحيح");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtCostBird.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة الصوص بشكل صحيح");
+                return;
+            }
+
             DAL.PassParameter.BirdsList.Add(new Tables.Birds
             {
                 BirdID = Guid.NewGuid(),
-                BirdCount =double.Parse( txtBirdNumber.Text),
-                DateAdd = DateTime.Parse(txtBridDate.Text),FarmID=SelectedFarmsCycle.FarmID,cycleID= SelectedFarmsCycle.CycleID
+                BirdCount = double.Parse(txtBirdNumber.Text),
+                DateAdd = DateTime.Parse(txtBridDate.Text),
+                FarmID = SelectedFarmsCycle.FarmID,
+                cycleID = SelectedFarmsCycle.CycleID,
+                CostPrice = double.Parse(txtCostBird.Text),
+                TotalCost = (double.Parse(txtBirdNumber.Text) * double.Parse(txtCostBird.Text))
 
             });
 
-            txtBirdNumber.Text  = "";
-           
+            txtBirdNumber.Text = txtCostBird.Text = "";
+
 
             BirdList.ItemsSource = DAL.PassParameter.BirdsList;
         }
@@ -466,17 +609,34 @@ namespace Warehouse_Manage.Pages
                 MessageBox.Show("الرجاء ادخال عدد الوفيات");
                 return;
             }
+            else if (txtCostDead.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة الصوص");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtBirdDead.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال عدد الوفيات بشكل صحيح");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtCostDead.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة الصوص بشكل صحيح");
+                return;
+            }
             DAL.PassParameter.BirdsDead.Add(new Tables.BirdsDead
             {
                 BirdsDeadID = Guid.NewGuid(),
                 BirdsDeadCount = double.Parse(txtBirdDead.Text),
                 DateAdd = DateTime.Parse(txtbirddeadDate.Text),
                 FarmID = SelectedFarmsCycle.FarmID,
-                cycleID = SelectedFarmsCycle.CycleID
+                cycleID = SelectedFarmsCycle.CycleID,
+                CostPrice = double.Parse(txtCostDead.Text),
+                TotalCost = (double.Parse(txtBirdDead.Text) * double.Parse(txtCostDead.Text))
 
             });
 
-            txtBirdDead.Text = "";
+            txtBirdDead.Text = txtCostDead.Text = "";
 
 
             BirdDeadList.ItemsSource = DAL.PassParameter.BirdsDead;
@@ -489,17 +649,41 @@ namespace Warehouse_Manage.Pages
                 MessageBox.Show("الرجاء ادخال عدد العلف");
                 return;
             }
+            if (txtFeederType.SelectedIndex == -1)
+            {
+                MessageBox.Show("الرجاء اختيار نوع العلف");
+                return;
+            }
+            else if (txtCostFeeder.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة العلف");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtFeederCount.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال عدد العلف بشكل صحيح");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtCostFeeder.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة العلف بشكل صحيح");
+                return;
+            }
             DAL.PassParameter.Feeders.Add(new Tables.Feeders
             {
                 FeederID = Guid.NewGuid(),
                 FeederCount = double.Parse(txtFeederCount.Text),
                 DateAdd = DateTime.Parse(txtbirddeadDate.Text),
                 FarmID = SelectedFarmsCycle.FarmID,
-                cycleID = SelectedFarmsCycle.CycleID
+                cycleID = SelectedFarmsCycle.CycleID,
+                FeederType = txtFeederType.Text,
+                CostPrice = double.Parse(txtCostFeeder.Text),
+                TotalCost = (double.Parse(txtFeederCount.Text) * double.Parse(txtCostFeeder.Text))
 
             });
 
-            txtFeederCount.Text = "";
+            txtFeederCount.Text = txtCostFeeder.Text = "";
+            txtFeederType.SelectedIndex = -1;
 
 
             ListFeeders.ItemsSource = DAL.PassParameter.Feeders;
@@ -512,17 +696,34 @@ namespace Warehouse_Manage.Pages
                 MessageBox.Show("الرجاء ادخال عدد المياه");
                 return;
             }
+            else if (txtCostWater.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة المياه");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtWaterCount.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال عدد المياه بشكل صحيح");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtCostWater.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة المياه بشكل صحيح");
+                return;
+            }
             DAL.PassParameter.Waters.Add(new Tables.Waters
             {
                 WaterID = Guid.NewGuid(),
                 WaterCount = double.Parse(txtWaterCount.Text),
                 DateAdd = DateTime.Parse(txtbirddeadDate.Text),
                 FarmID = SelectedFarmsCycle.FarmID,
-                cycleID = SelectedFarmsCycle.CycleID
+                cycleID = SelectedFarmsCycle.CycleID,
+                CostPrice = double.Parse(txtCostWater.Text),
+                TotalCost = (double.Parse(txtWaterCount.Text) * double.Parse(txtCostWater.Text))
 
             });
 
-            txtWaterCount.Text = "";
+            txtWaterCount.Text = txtCostWater.Text = "";
 
 
             ListWaters.ItemsSource = DAL.PassParameter.Waters;
@@ -535,13 +736,31 @@ namespace Warehouse_Manage.Pages
                 MessageBox.Show("الرجاء ادخال عدد النجارة");
                 return;
             }
+            else if (txtCostCarpentry.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة النجارة");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtCarpentryCount.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال عدد النجارة بشكل صحيح");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtCostCarpentry.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال سعر كلفة النجارة بشكل صحيح");
+                return;
+            }
             DAL.PassParameter.Carpentrys.Add(new Tables.Carpentrys
             {
                 CarpentryID = Guid.NewGuid(),
                 CarpentryCount = double.Parse(txtCarpentryCount.Text),
                 DateAdd = DateTime.Parse(txtCarpentryDate.Text),
                 FarmID = SelectedFarmsCycle.FarmID,
-                cycleID = SelectedFarmsCycle.CycleID
+                cycleID = SelectedFarmsCycle.CycleID,
+                CarpentryType = "شوال",
+                CostPrice = double.Parse(txtCostCarpentry.Text),
+                TotalCost = (double.Parse(txtCarpentryCount.Text) * double.Parse(txtCostCarpentry.Text))
 
             });
 
@@ -576,7 +795,7 @@ namespace Warehouse_Manage.Pages
                 string View = $"{DateTime.Now.Year}/{Count}";
 
 
-                if (SelectedFarmsCycle!=null)
+                if (SelectedFarmsCycle != null)
                 {
                     if (FarmName.Text == SelectedFarmsCycle.FarmName)
                     {
@@ -584,8 +803,8 @@ namespace Warehouse_Manage.Pages
                         return;
                     }
                 }
-                   
-               
+
+
 
                 txtCycleStrID.Text = View;
 
@@ -593,10 +812,18 @@ namespace Warehouse_Manage.Pages
             }
         }
 
+
+
+        //متغير يتم حفظ بداخله رقم التسلسل للموظف من اجل تعديله
+        int EditEmployeeIndex = 0;
+        bool UpdateEmployee = false;
+
+        Tables.Employees SelectedEmployee = new Tables.Employees();
+
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as System.Windows.Controls.Button;
-           
+
 
             string Message = "هل تريد الحذف ؟";
 
@@ -605,7 +832,7 @@ namespace Warehouse_Manage.Pages
                 button.IsEnabled = false;
             }
 
-           else if (SelectedFarmsCycle.CycleClose==false)
+            else if (SelectedFarmsCycle.CycleClose == false)
             {
                 switch (button.FontFamily.ToString())
                 {
@@ -615,10 +842,30 @@ namespace Warehouse_Manage.Pages
                         {
                             DAL.PassParameter.EmployeesList.Remove(Employees);
 
-                            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList;
+                            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i=>i.EmployeeID);
                         }
 
                         break;
+                    case "EditEmployees":
+                         Employees = button.CommandParameter as Tables.Employees;
+                       
+                            EditEmployeeIndex= DAL.PassParameter.EmployeesList.IndexOf(Employees);
+
+
+                            txtEmployeename.Text = Employees.EmployeeName;
+                            txtEmployeeState.Text = Employees.State;
+                            txtDateadd.Text = Employees.DateAdd.ToString("M/dd/yyyy");
+                            txtDateRemove.Text = Employees.DateAdd.ToString("M/dd/yyyy");
+                        txtEmployeeSalary.Text = Employees.Salary.ToString();
+
+
+                        UpdateEmployee = true;
+                        EmployeeAdd.Content = "تعديل";
+
+                        SelectedEmployee = Employees;
+
+                        break;
+                        
                     case "Birds":
                         var Birds = button.CommandParameter as Tables.Birds;
                         if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -669,22 +916,157 @@ namespace Warehouse_Manage.Pages
                         }
 
                         break;
+                    case "Electricity":
+                        var Electricity = button.CommandParameter as Tables.Electricity;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Electricity.Remove(Electricity);
+
+                            ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
+                        }
+
+                        break;
+
+                    case "Maintenance":
+                        var Maintenance = button.CommandParameter as Tables.Maintenance;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Maintenance.Remove(Maintenance);
+
+                            ListMaintenance.ItemsSource = DAL.PassParameter.Maintenance;
+                        }
+
+                        break;
+                        
 
                 }
             }
 
-          
 
 
 
-           
 
-           
+
+
+
         }
+
+
+
+
+
 
         private void btnCloseCycle_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void btnAddElectricity_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtElectricityCost.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال كلفة الكهرباء");
+                return;
+            }
+            else if (txtElectricityNote.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال بيان كلفة الكهرباء");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtElectricityCost.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال كلفة الكهرباء بشكل صحيح");
+                return;
+            }
+           
+            DAL.PassParameter.Electricity.Add(new Tables.Electricity
+            {
+                ElectricityID = Guid.NewGuid(),
+                E_Cost = double.Parse(txtElectricityCost.Text),
+                Notes = txtElectricityNote.Text,
+                FarmID = SelectedFarmsCycle.FarmID,
+                cycleID = SelectedFarmsCycle.CycleID,
+                DateAdd = DateTime.Parse(txtElectricityDate.Text)
+
+
+            });
+
+            txtElectricityCost.Text= txtElectricityNote.Text = "";
+
+
+            ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
+        }
+
+        private void btnAddMaintenance_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtMaintenanceCost.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال كلفة الصيانة");
+                return;
+            }
+            else if (txtMaintenanceNote.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال بيان كلفة الصيانة");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtMaintenanceCost.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال كلفة الصيانة بشكل صحيح");
+                return;
+            }
+
+            DAL.PassParameter.Maintenance.Add(new Tables.Maintenance
+            {
+                MaintenanceID = Guid.NewGuid(),
+                MaintenanceCost = double.Parse(txtMaintenanceCost.Text),
+                Notes = txtMaintenanceNote.Text,
+                FarmID = SelectedFarmsCycle.FarmID,
+                cycleID = SelectedFarmsCycle.CycleID,
+                DateAdd = DateTime.Parse(txtMaintenanceDate.Text)
+
+
+            });
+
+            txtMaintenanceCost.Text = txtMaintenanceNote.Text = "";
+
+
+            ListMaintenance.ItemsSource = DAL.PassParameter.Maintenance;
+        }
+
+        private void btnAddMiscellaneousCost_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtMiscellaneousCost.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال كلفة المتفرقة");
+                return;
+            }
+            else if (txtMiscellaneousNote.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال بيان كلفة المتفرقة");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtMiscellaneousCost.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال كلفة المتفرقة بشكل صحيح");
+                return;
+            }
+
+            DAL.PassParameter.Miscellaneous.Add(new Tables.Miscellaneous
+            {
+                MiscellaneousID = Guid.NewGuid(),
+                MiscellaneousCost = double.Parse(txtMiscellaneousCost.Text),
+                Notes = txtMiscellaneousNote.Text,
+                FarmID = SelectedFarmsCycle.FarmID,
+                cycleID = SelectedFarmsCycle.CycleID,
+                DateAdd = DateTime.Parse(txtMiscellaneousDate.Text)
+
+
+            });
+
+            txtMiscellaneousCost.Text = txtMiscellaneousNote.Text = "";
+
+
+            ListMiscellaneous.ItemsSource = DAL.PassParameter.Miscellaneous;
         }
     }
 }
