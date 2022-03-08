@@ -57,6 +57,9 @@ namespace Warehouse_Manage.DAL
         public static ObservableCollection<Tables.Maintenance> Maintenance { get; set; } = new ObservableCollection<Tables.Maintenance>();
         public static ObservableCollection<Tables.Miscellaneous> Miscellaneous { get; set; } = new ObservableCollection<Tables.Miscellaneous>();
         public static ObservableCollection<Tables.Fuel> Fuel { get; set; } = new ObservableCollection<Tables.Fuel>();
+        public static ObservableCollection<Tables.Gas_Cylinder> Gas_Cylinder { get; set; } = new ObservableCollection<Tables.Gas_Cylinder>();
+        public static ObservableCollection<Tables.Gas_Liquid> Gas_Liquid { get; set; } = new ObservableCollection<Tables.Gas_Liquid>();
+        public static ObservableCollection<Tables.Pharmaceutical> Pharmaceutical { get; set; } = new ObservableCollection<Tables.Pharmaceutical>();
 
 
 

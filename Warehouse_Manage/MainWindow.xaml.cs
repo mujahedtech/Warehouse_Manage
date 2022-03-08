@@ -65,6 +65,8 @@ namespace Warehouse_Manage
             GridMain.Children.Add(new Pages.Home());
 
             Loaded += MainWindow_Loaded;
+
+           
         }
 
        

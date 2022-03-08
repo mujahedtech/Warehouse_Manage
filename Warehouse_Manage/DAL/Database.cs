@@ -36,6 +36,9 @@ namespace Warehouse_Manage.DAL
             _database.CreateTableAsync<Tables.Maintenance>();
             _database.CreateTableAsync<Tables.Miscellaneous>();
             _database.CreateTableAsync<Tables.Fuel>();
+            _database.CreateTableAsync<Tables.Gas_Cylinder>();
+            _database.CreateTableAsync<Tables.Gas_Liquid>();
+            _database.CreateTableAsync<Tables.Pharmaceutical>();
 
         }
 
@@ -252,6 +255,58 @@ namespace Warehouse_Manage.DAL
         }
 
         #endregion
+
+
+
+        #region Gas_Cylinder
+
+        public Task<int> SaveGas_CylinderAsync(List<Tables.Gas_Cylinder> Gas_Cylinder)
+        {
+            return _database.InsertAllAsync(Gas_Cylinder);
+
+        }
+        public Task<List<Tables.Gas_Cylinder>> DeleteGas_CylinderAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Gas_Cylinder>($"delete from Gas_Cylinder where cycleID={CycleID}");
+
+        }
+
+        #endregion
+
+        #region Gas_Liquid
+
+        public Task<int> SaveGas_LiquidAsync(List<Tables.Gas_Liquid> Gas_Liquid)
+        {
+            return _database.InsertAllAsync(Gas_Liquid);
+
+        }
+        public Task<List<Tables.Gas_Liquid>> DeleteGas_LiquidAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Gas_Liquid>($"delete from Gas_Liquid where cycleID={CycleID}");
+
+        }
+
+       
+        #endregion
+
+
+        #region Pharmaceutical
+
+        public Task<int> SavePharmaceuticalAsync(List<Tables.Pharmaceutical> Pharmaceutical)
+        {
+            return _database.InsertAllAsync(Pharmaceutical);
+
+        }
+        public Task<List<Tables.Pharmaceutical>> DeletePharmaceuticalAsync(int CycleID)
+        {
+            return _database.QueryAsync<Tables.Pharmaceutical>($"delete from Pharmaceutical where cycleID={CycleID}");
+
+        }
+
+        #endregion
+
+
+
 
     }
 }

@@ -100,13 +100,41 @@ namespace Warehouse_Manage.Pages
 
 
 
+        void ClearData()
+        {
+
+            txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = txtFarmSupervisor.Text = "";
+
+
+            txtEmployeeState.SelectedIndex = -1;
+
+
+            txtEmployeeSalary.Text = txtCostBird.Text= txtCostDead.Text=
+                txtCostWater.Text= txtCostFeeder.Text= txtCostCarpentry.Text= 
+                txtElectricityCost.Text= txtElectricityNote.Text= txtMaintenanceCost.Text= 
+                txtMaintenanceNote.Text= txtMiscellaneousCost.Text= txtMiscellaneousNote.Text
+                = txtFuelCost.Text= txtFuelNote.Text= txtGas_CylinderCost.Text= txtGas_CylinderNote.Text=
+                txtGas_LiquidCost.Text= txtGas_LiquidNote.Text= txtPharmaceuticalName.Text= 
+                txtPharmaceuticalQTY.Text= txtPharmaceuticalCostPrice.Text= txtPharmaceuticalNote.Text
+
+                = "";
+        }
+
         private void AddNewCycle_Click(object sender, RoutedEventArgs e)
         {
+
+            InputLanguageManager.SetInputLanguage(txtFarmSupervisor, System.Globalization.CultureInfo.CreateSpecificCulture("ar"));
             btnCloseCycle.Visibility = Visibility.Collapsed;
             ExtraData.SelectedIndex = 0;
 
-            txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = txtFarmSupervisor.Text = "";
+            ClearData();
+
+
+
+
             CycleDataview.Visibility = Visibility.Visible;
+
+            Header.Text = "بداية دورة جديدة";
 
             SaveData.Content = "بداية دورة جديدة";
             ExtraData.IsEnabled = false;
@@ -121,6 +149,11 @@ namespace Warehouse_Manage.Pages
             DAL.PassParameter.Carpentrys = new ObservableCollection<Tables.Carpentrys>();
             DAL.PassParameter.Maintenance = new ObservableCollection<Tables.Maintenance>();
             DAL.PassParameter.Electricity = new ObservableCollection<Tables.Electricity>();
+            DAL.PassParameter.Miscellaneous = new ObservableCollection<Tables.Miscellaneous>();
+            DAL.PassParameter.Fuel = new ObservableCollection<Tables.Fuel>();
+            DAL.PassParameter.Gas_Cylinder = new ObservableCollection<Tables.Gas_Cylinder>();
+            DAL.PassParameter.Gas_Liquid = new ObservableCollection<Tables.Gas_Liquid>();
+            DAL.PassParameter.Pharmaceutical = new ObservableCollection<Tables.Pharmaceutical>();
 
             GridHideControll.Visibility = Visibility.Collapsed;
             SaveData.Visibility = Visibility.Visible;
@@ -192,6 +225,8 @@ namespace Warehouse_Manage.Pages
 
             //عرض اسم المزرعة
             FarmName.Text = SelectedFarmsCycle.FarmName;
+
+            Header.Text = "تعديل بيانات الدورة";
 
             SaveData.Content = "تعديل البيانات";
 
@@ -276,7 +311,7 @@ namespace Warehouse_Manage.Pages
 
 
             //جلب بيانات الكهرباء المدخلين سابقا على الدورة
-            var DataElectricity = await new DAL.Database()._database.Table<Tables.Electricity>().Where(i=>i.cycleID== Check.CycleID).OrderBy(i => i.ElectricityID).ToListAsync();
+            var DataElectricity = await new DAL.Database()._database.Table<Tables.Electricity>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.ElectricityID).ToListAsync();
 
             DAL.PassParameter.Electricity = new ObservableCollection<Tables.Electricity>(DataElectricity);
 
@@ -295,13 +330,54 @@ namespace Warehouse_Manage.Pages
 
 
 
-            //جلب بيانات الصيانة المدخلين سابقا على الدورة
+            //جلب بيانات المتفرقة المدخلين سابقا على الدورة
             var DataMiscellaneous = await new DAL.Database()._database.Table<Tables.Miscellaneous>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.MiscellaneousID).ToListAsync();
 
             DAL.PassParameter.Miscellaneous = new ObservableCollection<Tables.Miscellaneous>(DataMiscellaneous);
 
-            //ترتيب بيانات النجارة المدخلين سابقا
+            //ترتيب بيانات المتفرقة المدخلين سابقا
             ListMiscellaneous.ItemsSource = DAL.PassParameter.Miscellaneous;
+
+
+
+            //جلب بيانات الديزل المدخلين سابقا على الدورة
+            var DataFuel = await new DAL.Database()._database.Table<Tables.Fuel>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.FuelID).ToListAsync();
+
+            DAL.PassParameter.Fuel = new ObservableCollection<Tables.Fuel>(DataFuel);
+
+            //ترتيب بيانات الديزل المدخلين سابقا
+            ListFuel.ItemsSource = DAL.PassParameter.Fuel;
+
+
+            //جلب بيانات الغاز السائل المدخلين سابقا على الدورة
+            var DataGas_Liquid = await new DAL.Database()._database.Table<Tables.Gas_Liquid>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.Gas_LiquidID).ToListAsync();
+
+            DAL.PassParameter.Gas_Liquid = new ObservableCollection<Tables.Gas_Liquid>(DataGas_Liquid);
+
+            //ترتيب بيانات الغاز السائل المدخلين سابقا
+            ListGas_Liquid.ItemsSource = DAL.PassParameter.Gas_Liquid;
+
+
+
+            //جلب بيانات جرار الغاز المدخلين سابقا على الدورة
+            var DataGas_Cylinder = await new DAL.Database()._database.Table<Tables.Gas_Cylinder>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.Gas_CylinderID).ToListAsync();
+
+            DAL.PassParameter.Gas_Cylinder = new ObservableCollection<Tables.Gas_Cylinder>(DataGas_Cylinder);
+
+            //ترتيب بيانات جرار الغاز المدخلين سابقا
+            ListGas_Cylinder.ItemsSource = DAL.PassParameter.Gas_Cylinder;
+
+
+
+
+            //جلب بيانات الادوية المدخلين سابقا على الدورة
+            var DataPharmaceutical = await new DAL.Database()._database.Table<Tables.Pharmaceutical>().Where(i => i.cycleID == Check.CycleID).OrderBy(i => i.PharmaceuticalID).ToListAsync();
+
+            DAL.PassParameter.Pharmaceutical = new ObservableCollection<Tables.Pharmaceutical>(DataPharmaceutical);
+
+            //ترتيب بيانات الادوية المدخلين سابقا
+            ListPharmaceutical.ItemsSource = DAL.PassParameter.Pharmaceutical;
+
 
 
 
@@ -315,12 +391,16 @@ namespace Warehouse_Manage.Pages
 
             if (FarmName.SelectedItem == null)
             {
-                MessageBox.Show("الرجاء اختيار اسم  المزرعة");
+                new Pages.MessageBoxWindows("الرجاء اختيار اسم المزرعة").ShowDialog();
+                FarmName.IsDropDownOpen = true;
+
                 return;
             }
             if (txtFarmSupervisor.Text == "")
             {
-                MessageBox.Show("الرجاء ادخال اسم مشرف المزرعة");
+                new Pages.MessageBoxWindows("الرجاء ادخال اسم مشرف المزرعة").ShowDialog();
+                InputLanguageManager.SetInputLanguage(txtFarmSupervisor, System.Globalization.CultureInfo.CreateSpecificCulture("ar"));
+                txtFarmSupervisor.Focus();
                 return;
             }
 
@@ -329,7 +409,7 @@ namespace Warehouse_Manage.Pages
                 Tables.FarmsCycle farmsCycle;
 
 
-               
+
 
                 if (UpdateMode == true)
                 {
@@ -444,6 +524,38 @@ namespace Warehouse_Manage.Pages
                         await new DAL.Database("").SaveMiscellaneousAsync(DAL.PassParameter.Miscellaneous.ToList());
 
 
+
+                        //حذف بيانات الديزل السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeleteFuelAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات الديزل الجديدة
+                        await new DAL.Database("").SaveFuelAsync(DAL.PassParameter.Fuel.ToList());
+
+
+                        //حذف بيانات جرار الغاز السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeleteGas_CylinderAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات جرار الغاز الجديدة
+                        await new DAL.Database("").SaveGas_CylinderAsync(DAL.PassParameter.Gas_Cylinder.ToList());
+
+
+
+                        //حذف بيانات الغاز السائل السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeleteGas_LiquidAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات الغاز السائل  الجديدة
+                        await new DAL.Database("").SaveGas_LiquidAsync(DAL.PassParameter.Gas_Liquid.ToList());
+
+
+
+
+                        //حذف بيانات الادوية السابقة من اجل ادخال البياناتا لجديدة
+                        await new DAL.Database("").DeletePharmaceuticalAsync(SelectedFarmsCycle.CycleID);
+
+                        //ادخال بيانات الادوية  الجديدة
+                        await new DAL.Database("").SavePharmaceuticalAsync(DAL.PassParameter.Pharmaceutical.ToList());
+
+
                         CycleDataview.Visibility = Visibility.Collapsed;
 
                         Farms_LoadedAsync();
@@ -489,41 +601,64 @@ namespace Warehouse_Manage.Pages
 
         private void EmployeeAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (txtEmployeename.Text == "" || txtEmployeeState.Text == "" || txtEmployeeState.SelectedIndex == -1||txtEmployeeSalary.Text=="")
+
+          
+
+             if (txtEmployeename.Text == "")
             {
-                MessageBox.Show("الرجاء ادخال البيانات بشكل كافي");
+                new Pages.MessageBoxWindows("خطا في الادخال", "الرجاء ادخال اسم العامل").ShowDialog();
+                txtEmployeename.Focus();
                 return;
             }
 
-           else if (DAL.Validations.IsDate(txtDateadd.SelectedDate.Value.ToString())==false)
+            else if (txtEmployeeState.SelectedIndex == -1)
             {
-                MessageBox.Show("الرجاء ادخال تاريخ الاضافة بشكل صحيح بشكل كافي");
+                new Pages.MessageBoxWindows("الرجاء اختيار حالة العامل").ShowDialog();
+                txtEmployeeState.IsDropDownOpen = true;
                 return;
             }
-           else if (DAL.Validations.IsDate(txtDateRemove.SelectedDate.Value.ToString()) == false)
+
+
+
+
+            else if (DAL.Validations.IsDate(txtDateadd.SelectedDate.Value.ToString()) == false)
             {
-                MessageBox.Show("الرجاء ادخال تاريخ الخروج بشكل صحيح بشكل كافي");
+                new Pages.MessageBoxWindows("الرجاء ادخال تاريخ الاضافة بشكل صحيح بشكل كافي").ShowDialog();
+
+               
                 return;
             }
-            else if (DAL.Validations.IsDouble(txtEmployeeSalary.Text) == false)
+            else if (DAL.Validations.IsDate(txtDateRemove.SelectedDate.Value.ToString()) == false)
             {
-                MessageBox.Show("الرجاء ادخال راتب العامل بشكل صحيح");
+                new Pages.MessageBoxWindows("الرجاء ادخال تاريخ الخروج بشكل صحيح بشكل كافي").ShowDialog();
+            
                 return;
             }
+            if (txtEmployeeSalary.Text != "")
+            {
+                if (DAL.Validations.IsDouble(txtEmployeeSalary.Text) == false)
+                {
+                    new Pages.MessageBoxWindows("الرجاء ادخال راتب العامل بشكل صحيح").ShowDialog();
+                    txtEmployeeSalary.Focus();
+                    return;
+                }
+            }
+
 
             if (UpdateEmployee)
             {
 
                 DAL.PassParameter.EmployeesList[EditEmployeeIndex] = new Tables.Employees
-                { cycleID = SelectedEmployee.cycleID,
-                    FarmID= SelectedEmployee.FarmID,
-                    EmployeeID= SelectedEmployee.EmployeeID,
+                {
+                    cycleID = SelectedEmployee.cycleID,
+                    FarmID = SelectedEmployee.FarmID,
+                    EmployeeID = SelectedEmployee.EmployeeID,
                     EmployeeName = txtEmployeename.Text,
                     DateAdd = DAL.PassParameter.GetDateWithCurrentTime(txtDateadd.SelectedDate.Value),
                     DateRemove = DAL.PassParameter.GetDateWithCurrentTime(txtDateRemove.SelectedDate.Value),
                     State = txtEmployeeState.Text,
-                    Salary=double.Parse( txtEmployeeSalary.Text)
-                   
+                    Salary = DAL.Validations.IsDouble(txtEmployeeSalary.Text) ? double.Parse(txtEmployeeSalary.Text) : 0
+
                 };
 
                 EmployeeAdd.Content = "اضافة";
@@ -534,10 +669,10 @@ namespace Warehouse_Manage.Pages
                 EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
                 UpdateEmployee = false;
 
-                return; 
+                return;
             }
 
-          
+
             DAL.PassParameter.EmployeesList.Add(new Tables.Employees
             {
                 EmployeeID = Guid.NewGuid(),
@@ -547,10 +682,10 @@ namespace Warehouse_Manage.Pages
                 State = txtEmployeeState.Text,
                 FarmID = SelectedFarmsCycle.FarmID,
                 cycleID = SelectedFarmsCycle.CycleID,
-                Salary = double.Parse(txtEmployeeSalary.Text)
+                Salary = DAL.Validations.IsDouble(txtEmployeeSalary.Text) ? double.Parse(txtEmployeeSalary.Text) : 0
             });
 
-            txtEmployeename.Text = txtEmployeeState.Text =txtEmployeeSalary.Text = "";
+            txtEmployeename.Text = txtEmployeeState.Text = txtEmployeeSalary.Text = "";
             txtEmployeeState.SelectedIndex = -1;
 
 
@@ -565,22 +700,28 @@ namespace Warehouse_Manage.Pages
 
             if (txtBirdNumber.Text == "")
             {
-                MessageBox.Show("الرجاء ادخال عدد الصوص");
+                new Pages.MessageBoxWindows("الرجاء ادخال عدد الصوص").ShowDialog();
+                txtBirdNumber.Focus();
                 return;
             }
             else if (txtCostBird.Text == "")
             {
-                MessageBox.Show("الرجاء ادخال سعر كلفة الصوص");
+                new Pages.MessageBoxWindows("الرجاء ادخال سعر كلفة الصوص").ShowDialog();
+                txtCostBird.Focus();
                 return;
             }
             else if (DAL.Validations.IsDouble(txtBirdNumber.Text) == false)
             {
-                MessageBox.Show("الرجاء ادخال عدد الصوص بشكل صحيح");
+                new Pages.MessageBoxWindows("الرجاء ادخال عدد الصوص بشكل صحيح").ShowDialog();
+                txtBirdNumber.Focus();
+
                 return;
             }
             else if (DAL.Validations.IsDouble(txtCostBird.Text) == false)
             {
-                MessageBox.Show("الرجاء ادخال سعر كلفة الصوص بشكل صحيح");
+                new Pages.MessageBoxWindows("الرجاء ادخال سعر كلفة الصوص بشكل صحيح").ShowDialog();
+                txtCostBird.Focus();
+
                 return;
             }
 
@@ -769,198 +910,6 @@ namespace Warehouse_Manage.Pages
 
             ListCarpentrys.ItemsSource = DAL.PassParameter.Carpentrys;
         }
-
-        private async void FarmName_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (FarmName.SelectedItem != null)
-            {
-
-
-                var data = (Tables.Farms)FarmName.SelectedItem;
-
-
-
-
-                var Data = await new DAL.Database()._database.QueryAsync<Tables.FarmsCycle>("select * from FarmsCycle");
-
-                Data = Data.ToList().Where(i => i.FarmID == data.FarmID).ToList();
-
-                int Count = 1;
-
-                if (Data.Count > 0)
-                {
-                    Count = Data.Count + 1;
-                }
-
-                string View = $"{DateTime.Now.Year}/{Count}";
-
-
-                if (SelectedFarmsCycle != null)
-                {
-                    if (FarmName.Text == SelectedFarmsCycle.FarmName)
-                    {
-                        txtCycleStrID.Text = SelectedFarmsCycle.FarmStrNumber;
-                        return;
-                    }
-                }
-
-
-
-                txtCycleStrID.Text = View;
-
-
-            }
-        }
-
-
-
-        //متغير يتم حفظ بداخله رقم التسلسل للموظف من اجل تعديله
-        int EditEmployeeIndex = 0;
-        bool UpdateEmployee = false;
-
-        Tables.Employees SelectedEmployee = new Tables.Employees();
-
-        private void Delete_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as System.Windows.Controls.Button;
-
-
-            string Message = "هل تريد الحذف ؟";
-
-            if (SelectedFarmsCycle.CycleClose)
-            {
-                button.IsEnabled = false;
-            }
-
-            else if (SelectedFarmsCycle.CycleClose == false)
-            {
-                switch (button.FontFamily.ToString())
-                {
-                    case "Employees":
-                        var Employees = button.CommandParameter as Tables.Employees;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.EmployeesList.Remove(Employees);
-
-                            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i=>i.EmployeeID);
-                        }
-
-                        break;
-                    case "EditEmployees":
-                         Employees = button.CommandParameter as Tables.Employees;
-                       
-                            EditEmployeeIndex= DAL.PassParameter.EmployeesList.IndexOf(Employees);
-
-
-                            txtEmployeename.Text = Employees.EmployeeName;
-                            txtEmployeeState.Text = Employees.State;
-                            txtDateadd.Text = Employees.DateAdd.ToString("M/dd/yyyy");
-                            txtDateRemove.Text = Employees.DateAdd.ToString("M/dd/yyyy");
-                        txtEmployeeSalary.Text = Employees.Salary.ToString();
-
-
-                        UpdateEmployee = true;
-                        EmployeeAdd.Content = "تعديل";
-
-                        SelectedEmployee = Employees;
-
-                        break;
-                        
-                    case "Birds":
-                        var Birds = button.CommandParameter as Tables.Birds;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.BirdsList.Remove(Birds);
-
-                            BirdList.ItemsSource = DAL.PassParameter.BirdsList;
-                        }
-
-                        break;
-                    case "BirdDead":
-                        var BirdsDead = button.CommandParameter as Tables.BirdsDead;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.BirdsDead.Remove(BirdsDead);
-
-                            BirdDeadList.ItemsSource = DAL.PassParameter.BirdsDead;
-                        }
-
-                        break;
-                    case "Feeders":
-                        var Feeders = button.CommandParameter as Tables.Feeders;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.Feeders.Remove(Feeders);
-
-                            ListFeeders.ItemsSource = DAL.PassParameter.Feeders;
-                        }
-
-                        break;
-                    case "Waters":
-                        var Waters = button.CommandParameter as Tables.Waters;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.Waters.Remove(Waters);
-
-                            ListWaters.ItemsSource = DAL.PassParameter.Waters;
-                        }
-
-                        break;
-                    case "Carpentrys":
-                        var Carpentrys = button.CommandParameter as Tables.Carpentrys;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.Carpentrys.Remove(Carpentrys);
-
-                            ListCarpentrys.ItemsSource = DAL.PassParameter.Carpentrys;
-                        }
-
-                        break;
-                    case "Electricity":
-                        var Electricity = button.CommandParameter as Tables.Electricity;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.Electricity.Remove(Electricity);
-
-                            ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
-                        }
-
-                        break;
-
-                    case "Maintenance":
-                        var Maintenance = button.CommandParameter as Tables.Maintenance;
-                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            DAL.PassParameter.Maintenance.Remove(Maintenance);
-
-                            ListMaintenance.ItemsSource = DAL.PassParameter.Maintenance;
-                        }
-
-                        break;
-                        
-
-                }
-            }
-
-
-
-
-
-
-
-
-        }
-
-
-
-
-
-
-        private void btnCloseCycle_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void btnAddElectricity_Click(object sender, RoutedEventArgs e)
         {
             if (txtElectricityCost.Text == "")
@@ -978,7 +927,7 @@ namespace Warehouse_Manage.Pages
                 MessageBox.Show("الرجاء ادخال كلفة الكهرباء بشكل صحيح");
                 return;
             }
-           
+
             DAL.PassParameter.Electricity.Add(new Tables.Electricity
             {
                 ElectricityID = Guid.NewGuid(),
@@ -991,7 +940,7 @@ namespace Warehouse_Manage.Pages
 
             });
 
-            txtElectricityCost.Text= txtElectricityNote.Text = "";
+            txtElectricityCost.Text = txtElectricityNote.Text = "";
 
 
             ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
@@ -1067,6 +1016,457 @@ namespace Warehouse_Manage.Pages
 
 
             ListMiscellaneous.ItemsSource = DAL.PassParameter.Miscellaneous;
+        }
+
+        private void FuelCLickManage(object sender, RoutedEventArgs e)
+        {
+            var button = sender as System.Windows.Controls.Button;
+
+
+
+
+
+            switch (button.FontFamily.ToString())
+            {
+                #region Fuel
+                case "Fuel":
+
+                    if (txtFuelCost.Text == "")
+                    {
+                        MessageBox.Show("الرجاء ادخال كلفة الديزل");
+                        return;
+                    }
+                    else if (txtFuelNote.Text == "")
+                    {
+                        MessageBox.Show("الرجاء ادخال بيان كلفة الديزل");
+                        return;
+                    }
+                    else if (DAL.Validations.IsDouble(txtFuelCost.Text) == false)
+                    {
+                        MessageBox.Show("الرجاء ادخال كلفة الديزل بشكل صحيح");
+                        return;
+                    }
+
+                    DAL.PassParameter.Fuel.Add(new Tables.Fuel
+                    {
+                        FuelID = Guid.NewGuid(),
+                        FuelCost = double.Parse(txtFuelCost.Text),
+                        Notes = txtFuelNote.Text,
+                        FarmID = SelectedFarmsCycle.FarmID,
+                        cycleID = SelectedFarmsCycle.CycleID,
+                        DateAdd = DateTime.Parse(txtFuelDate.Text)
+
+
+                    });
+
+                    txtFuelCost.Text = txtFuelNote.Text = "";
+
+                    ListFuel.ItemsSource = DAL.PassParameter.Fuel;
+
+
+                    break;
+                #endregion
+
+                #region Gas_Cylinder
+                case "Gas_Cylinder":
+
+
+
+                    if (txtGas_CylinderCost.Text == "")
+                    {
+                        MessageBox.Show("الرجاء ادخال كلفة جرار الغاز");
+                        return;
+                    }
+                    else if (txtGas_CylinderNote.Text == "")
+                    {
+                        MessageBox.Show("الرجاء ادخال بيان كلفة جرار الغاز");
+                        return;
+                    }
+                    else if (DAL.Validations.IsDouble(txtGas_CylinderCost.Text) == false)
+                    {
+                        MessageBox.Show("الرجاء ادخال كلفة جرار الغاز بشكل صحيح");
+                        return;
+                    }
+
+                    DAL.PassParameter.Gas_Cylinder.Add(new Tables.Gas_Cylinder
+                    {
+                        Gas_CylinderID = Guid.NewGuid(),
+                        Gas_CylinderCost = double.Parse(txtGas_CylinderCost.Text),
+                        Notes = txtGas_CylinderNote.Text,
+                        FarmID = SelectedFarmsCycle.FarmID,
+                        cycleID = SelectedFarmsCycle.CycleID,
+                        DateAdd = DateTime.Parse(txtGas_CylinderDate.Text)
+
+
+                    });
+
+                    txtGas_CylinderCost.Text = txtGas_CylinderNote.Text = "";
+
+                    ListGas_Cylinder.ItemsSource = DAL.PassParameter.Gas_Cylinder;
+
+
+
+                    break;
+
+                #endregion
+
+                #region Gas_Liquid
+
+                case "Gas_Liquid":
+
+                    if (txtGas_LiquidCost.Text == "")
+                    {
+                        MessageBox.Show("الرجاء ادخال كلفة الغاز السائل");
+                        return;
+                    }
+                    else if (txtGas_LiquidNote.Text == "")
+                    {
+                        MessageBox.Show("الرجاء ادخال بيان كلفة الغاز السائل");
+                        return;
+                    }
+                    else if (DAL.Validations.IsDouble(txtGas_LiquidCost.Text) == false)
+                    {
+                        MessageBox.Show("الرجاء ادخال كلفة الغاز السائل بشكل صحيح");
+                        return;
+                    }
+
+                    DAL.PassParameter.Gas_Liquid.Add(new Tables.Gas_Liquid
+                    {
+                        Gas_LiquidID = Guid.NewGuid(),
+                        Gas_LiquidCost = double.Parse(txtGas_LiquidCost.Text),
+                        Notes = txtGas_LiquidNote.Text,
+                        FarmID = SelectedFarmsCycle.FarmID,
+                        cycleID = SelectedFarmsCycle.CycleID,
+                        DateAdd = DateTime.Parse(txtGas_LiquidDate.Text)
+
+
+                    });
+
+                    txtGas_LiquidCost.Text = txtGas_LiquidNote.Text = "";
+
+                    ListGas_Liquid.ItemsSource = DAL.PassParameter.Gas_Liquid;
+                    break;
+
+                    #endregion
+
+
+
+            }
+        }
+
+
+        private void btnAddPharmaceutical_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtPharmaceuticalName.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال اسم الدواء");
+                return;
+            }
+            else if (txtPharmaceuticalQTY.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال كمية الدواء");
+                return;
+            }
+            else if (txtPharmaceuticalCostPrice.Text == "")
+            {
+                MessageBox.Show("الرجاء ادخال كلفة الدواء");
+                return;
+            }
+
+            else if (DAL.Validations.IsDouble(txtPharmaceuticalQTY.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال كمية الدواء بشكل صحيح");
+                return;
+            }
+            else if (DAL.Validations.IsDouble(txtPharmaceuticalCostPrice.Text) == false)
+            {
+                MessageBox.Show("الرجاء ادخال كلفة الدواء بشكل صحيح");
+                return;
+            }
+
+            DAL.PassParameter.Pharmaceutical.Add(new Tables.Pharmaceutical
+            {
+               PharmaceuticalID=Guid.NewGuid(),
+                DateAdd=txtPharmaceuticalDate.SelectedDate.Value,
+                FarmID = SelectedFarmsCycle.FarmID,
+                cycleID = SelectedFarmsCycle.CycleID,CostPrice=double.Parse(txtPharmaceuticalCostPrice.Text),
+                PharmaceuticalQty=double.Parse(txtPharmaceuticalQTY.Text),
+                TotalCost=(double.Parse(txtPharmaceuticalCostPrice.Text) *double.Parse(txtPharmaceuticalQTY.Text)),
+                PharmaceuticalNote=txtPharmaceuticalNote.Text,
+                MedID= MedNames.MedID,
+                MedName = MedNames.MedName
+
+            });
+
+            txtPharmaceuticalName.Text = txtPharmaceuticalQTY.Text = txtPharmaceuticalCostPrice.Text = txtPharmaceuticalNote.Text = "";
+
+            MedNames = new DAL.MedNames();
+
+
+            ListPharmaceutical.ItemsSource = DAL.PassParameter.Pharmaceutical;
+        }
+
+
+        private async void FarmName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (FarmName.SelectedItem != null)
+            {
+
+
+                var data = (Tables.Farms)FarmName.SelectedItem;
+
+
+
+
+                var Data = await new DAL.Database()._database.QueryAsync<Tables.FarmsCycle>("select * from FarmsCycle");
+
+                Data = Data.ToList().Where(i => i.FarmID == data.FarmID).ToList();
+
+                int Count = 1;
+
+                if (Data.Count > 0)
+                {
+                    Count = Data.Count + 1;
+                }
+
+                string View = $"{DateTime.Now.Year}/{Count}";
+
+
+                if (SelectedFarmsCycle != null)
+                {
+                    if (FarmName.Text == SelectedFarmsCycle.FarmName)
+                    {
+                        txtCycleStrID.Text = SelectedFarmsCycle.FarmStrNumber;
+                        return;
+                    }
+                }
+
+
+
+                txtCycleStrID.Text = View;
+
+
+            }
+        }
+
+
+
+        //متغير يتم حفظ بداخله رقم التسلسل للموظف من اجل تعديله
+        int EditEmployeeIndex = 0;
+        bool UpdateEmployee = false;
+
+        Tables.Employees SelectedEmployee = new Tables.Employees();
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as System.Windows.Controls.Button;
+
+
+            string Message = "هل تريد الحذف ؟";
+
+            if (SelectedFarmsCycle.CycleClose)
+            {
+                button.IsEnabled = false;
+            }
+
+            else if (SelectedFarmsCycle.CycleClose == false)
+            {
+                switch (button.FontFamily.ToString())
+                {
+                    case "Employees":
+                        var Employees = button.CommandParameter as Tables.Employees;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.EmployeesList.Remove(Employees);
+
+                            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
+                        }
+
+                        break;
+                    case "EditEmployees":
+                        Employees = button.CommandParameter as Tables.Employees;
+
+                        EditEmployeeIndex = DAL.PassParameter.EmployeesList.IndexOf(Employees);
+
+
+                        txtEmployeename.Text = Employees.EmployeeName;
+                        txtEmployeeState.Text = Employees.State;
+                        txtDateadd.Text = Employees.DateAdd.ToString("M/dd/yyyy");
+                        txtDateRemove.Text = Employees.DateAdd.ToString("M/dd/yyyy");
+                        txtEmployeeSalary.Text = Employees.Salary.ToString();
+
+
+                        UpdateEmployee = true;
+                        EmployeeAdd.Content = "تعديل";
+
+                        SelectedEmployee = Employees;
+
+                        break;
+
+                    case "Birds":
+                        var Birds = button.CommandParameter as Tables.Birds;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.BirdsList.Remove(Birds);
+
+                            BirdList.ItemsSource = DAL.PassParameter.BirdsList;
+                        }
+
+                        break;
+                    case "BirdDead":
+                        var BirdsDead = button.CommandParameter as Tables.BirdsDead;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.BirdsDead.Remove(BirdsDead);
+
+                            BirdDeadList.ItemsSource = DAL.PassParameter.BirdsDead;
+                        }
+
+                        break;
+                    case "Feeders":
+                        var Feeders = button.CommandParameter as Tables.Feeders;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Feeders.Remove(Feeders);
+
+                            ListFeeders.ItemsSource = DAL.PassParameter.Feeders;
+                        }
+
+                        break;
+                    case "Waters":
+                        var Waters = button.CommandParameter as Tables.Waters;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Waters.Remove(Waters);
+
+                            ListWaters.ItemsSource = DAL.PassParameter.Waters;
+                        }
+
+                        break;
+                    case "Carpentrys":
+                        var Carpentrys = button.CommandParameter as Tables.Carpentrys;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Carpentrys.Remove(Carpentrys);
+
+                            ListCarpentrys.ItemsSource = DAL.PassParameter.Carpentrys;
+                        }
+
+                        break;
+                    case "Electricity":
+                        var Electricity = button.CommandParameter as Tables.Electricity;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Electricity.Remove(Electricity);
+
+                            ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
+                        }
+
+                        break;
+
+                    case "Maintenance":
+                        var Maintenance = button.CommandParameter as Tables.Maintenance;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Maintenance.Remove(Maintenance);
+
+                            ListMaintenance.ItemsSource = DAL.PassParameter.Maintenance;
+                        }
+
+                        break;
+                    case "Miscellaneous":
+                        var Miscellaneous = button.CommandParameter as Tables.Miscellaneous;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Miscellaneous.Remove(Miscellaneous);
+
+                            ListMiscellaneous.ItemsSource = DAL.PassParameter.Miscellaneous;
+                        }
+
+                        break;
+                    case "Fuel":
+                        var Fuel = button.CommandParameter as Tables.Fuel;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Fuel.Remove(Fuel);
+
+                            ListFuel.ItemsSource = DAL.PassParameter.Fuel;
+                        }
+
+                        break;
+                    case "Gas_Cylinder":
+                        var Gas_Cylinder = button.CommandParameter as Tables.Gas_Cylinder;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Gas_Cylinder.Remove(Gas_Cylinder);
+
+                            ListGas_Cylinder.ItemsSource = DAL.PassParameter.Gas_Cylinder;
+                        }
+
+                        break;
+                    case "Gas_Liquid":
+                        var Gas_Liquid = button.CommandParameter as Tables.Gas_Liquid;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Gas_Liquid.Remove(Gas_Liquid);
+
+                            ListGas_Liquid.ItemsSource = DAL.PassParameter.Gas_Liquid;
+                        }
+                        break;
+
+                    case "Pharmaceutical":
+                        var Pharmaceutical = button.CommandParameter as Tables.Pharmaceutical;
+                        if (MessageBox.Show(Message, "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            DAL.PassParameter.Pharmaceutical.Remove(Pharmaceutical);
+
+                            ListPharmaceutical.ItemsSource = DAL.PassParameter.Pharmaceutical;
+                        }
+
+
+                        break;
+
+
+                }
+            }
+
+
+
+
+
+
+
+
+        }
+
+        DAL.MedNames MedNames = new DAL.MedNames();
+        private void txtPharmaceuticalName_KeyDown(object sender, KeyEventArgs e)
+        {
+
+           
+
+            if (e.Key==Key.Enter)
+            {
+                if (txtPharmaceuticalName.Text == "")
+                {
+                    new Pages.MessageBoxWindows("الرجاء ادخال رقم الدواء").ShowDialog();
+                    return;
+                }
+
+                else if (DAL.Validations.IsDouble(txtPharmaceuticalName.Text) == false)
+                {
+                    new Pages.MessageBoxWindows("الرجاء ادخال رقم الدواء بشكل صحيح").ShowDialog();
+                    return;
+                }
+                var query = new DAL.Queries().MedNames.Where(i => i.MedID == double.Parse(txtPharmaceuticalName.Text));
+                if (query.Count()>0)
+                {
+                    MedNames = query.FirstOrDefault(); 
+                    txtPharmaceuticalName.Text = MedNames.MedName;
+                    txtPharmaceuticalQTY.Focus();
+                }
+               
+            }
         }
     }
 }

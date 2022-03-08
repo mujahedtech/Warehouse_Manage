@@ -113,6 +113,9 @@
     <Compile Include="Pages\FarmCycle.xaml.cs">
       <DependentUpon>FarmCycle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\MessageBoxWindows.xaml.cs">
+      <DependentUpon>MessageBoxWindows.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tables\Birds.cs" />
     <Compile Include="Tables\BirdsDead.cs" />
     <Compile Include="Tables\Carpentrys.cs" />
@@ -122,8 +125,11 @@
     <Compile Include="Tables\FarmsCycle.cs" />
     <Compile Include="Tables\Feeders.cs" />
     <Compile Include="Tables\Fuel.cs" />
+    <Compile Include="Tables\Gas_Cylinder.cs" />
+    <Compile Include="Tables\Gas_Liquid.cs" />
     <Compile Include="Tables\Maintenance.cs" />
     <Compile Include="Tables\Miscellaneous.cs" />
+    <Compile Include="Tables\Pharmaceutical.cs" />
     <Compile Include="Tables\Waters.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -151,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MessageBoxWindows.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
