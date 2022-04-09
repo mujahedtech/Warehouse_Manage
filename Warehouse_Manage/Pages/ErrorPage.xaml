@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
-        <Button  Click="btnCLose_Click" x:Name="btnCLose" Uid="1" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
+        <Button  Click="btnCLose_Click" x:Name="btnCLose" Uid="1" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10" >
             <materialDesign:PackIcon Kind="Power" Foreground="Red" Width="25" Height="25" />
         </Button>
 

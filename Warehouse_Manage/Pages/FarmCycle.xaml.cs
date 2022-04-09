@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,11 +37,147 @@ namespace Warehouse_Manage.Pages
     }
 
 
+    public class FooterTotal: INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public double TotalBirdsQty { get; set; }
+        public double TotalBirdsCost { get; set; }
+        public double TotalSalary { get; set; }
+        public double CountEmployeeQty { get; set; }
+        public double TotalBirdsDeadQty { get; set; }
+        public double TotalFeedersQty { get; set; }
+        public double TotalFeedersCost { get; set; }
+        public double TotalWaterQTY { get; set; }
+        public double TotalWaterCost { get; set; }
+        public double TotalCarpentrysQty { get; set; }
+        public double TotalCarpentrysCost { get; set; }
+
+        public double TotalElectricityCost { get; set; }
+        public double TotalMaintenanceCost { get; set; }
+        public double TotalMiscellaneousCost { get; set; }
+        public double TotalPharmaceuticalQty { get; set; }
+        public double TotalPharmaceuticalCost { get; set; }
+        public double TotalGas_CylinderCost { get; set; }
+        public double TotalGas_LiquidCost { get; set; }
+        public double TotalFuelCost { get; set; }
+
+
+
+        //Binding Area
+
+
+        private DAL.MedNames _selectedMed;
+        public DAL.MedNames SelectedMed
+        {
+            get { return _selectedMed; }
+
+            set { _selectedMed = value; OnPropertyChanged("SelectedMed"); ViewPharmaceuticalList = false; }
+        
+        }
+
+
+        private string _s;
+        public string Search
+        {
+            get { return _s;}
+            set { _s = value;
+
+                OnPropertyChanged("Search");
+                GetResults(_s); }
+        }
+
+        private readonly ObservableCollection<DAL.MedNames> _results = new ObservableCollection<DAL.MedNames>();
+        public ObservableCollection<DAL.MedNames> Results { get { return _results; } }
+
+        private void GetResults(string s)
+        {
+            _results.Clear();
+            Task.Factory.StartNew(() =>
+            {
+                //perform the actual search here and return a list with the results...
+                return  DAL.Queries.Ts.Where(i=> i.MedName.ToString().Contains(s.Trim()) || i.MedID.ToString().Trim().ToLower().Contains(s.Trim().ToLower()));
+            }).ContinueWith(task =>
+            {
+                //add the results to the source collection
+                foreach (DAL.MedNames result in task.Result)
+                    _results.Add(result);
+
+            }, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+
+        public bool ViewPharmaceuticalList { get; set; }
+        public string MedName { get; set; } = "ac";
+        public string MedID { get; set; } = "";
+        
+
+
+       
+
+    }
+
+
     /// <summary>
     /// Interaction logic for FarmCycle.xaml
     /// </summary>
     public partial class FarmCycle : UserControl
     {
+
+        FooterTotal FooterTotalClass = new FooterTotal();
+
+        //دالة من خلال يتمم تصفير جميع المجاميع الخاصة بكل جدول
+        void ClearTotalFooter()
+        {
+            FooterTotalClass.TotalBirdsCost = DAL.PassParameter.BirdsList.Sum(i => i.TotalCost);
+
+            FooterTotalClass.TotalBirdsQty = DAL.PassParameter.BirdsList.Sum(i => i.BirdCount);
+
+            FooterTotalClass.CountEmployeeQty = DAL.PassParameter.EmployeesList.Count();
+
+
+            FooterTotalClass.TotalSalary = DAL.PassParameter.EmployeesList.Sum(i => i.Salary);
+
+            FooterTotalClass.TotalBirdsDeadQty = DAL.PassParameter.BirdsDead.Sum(i => i.BirdsDeadCount);
+
+            FooterTotalClass.TotalFeedersQty = DAL.PassParameter.Feeders.Sum(i => i.FeederCount);
+
+            FooterTotalClass.TotalFeedersCost = DAL.PassParameter.Feeders.Sum(i => i.TotalCost);
+
+            FooterTotalClass.TotalWaterQTY = DAL.PassParameter.Waters.Sum(i => i.WaterCount);
+
+            FooterTotalClass.TotalWaterCost = DAL.PassParameter.Waters.Sum(i => i.TotalCost);
+
+            FooterTotalClass.TotalCarpentrysQty = DAL.PassParameter.Carpentrys.Sum(i => i.CarpentryCount);
+
+            FooterTotalClass.TotalCarpentrysCost = DAL.PassParameter.Carpentrys.Sum(i => i.TotalCost);
+
+            FooterTotalClass.TotalElectricityCost = DAL.PassParameter.Electricity.Sum(i => i.E_Cost);
+
+            FooterTotalClass.TotalMaintenanceCost = DAL.PassParameter.Maintenance.Sum(i => i.MaintenanceCost);
+
+            FooterTotalClass.TotalMiscellaneousCost = DAL.PassParameter.Miscellaneous.Sum(i => i.MiscellaneousCost);
+
+            FooterTotalClass.TotalPharmaceuticalQty = DAL.PassParameter.Pharmaceutical.Sum(i => i.PharmaceuticalQty);
+
+            FooterTotalClass.TotalPharmaceuticalCost = DAL.PassParameter.Pharmaceutical.Sum(i => i.TotalCost);
+
+            FooterTotalClass.TotalGas_CylinderCost = DAL.PassParameter.Gas_Cylinder.Sum(i => i.Gas_CylinderCost);
+
+            FooterTotalClass.TotalGas_LiquidCost = DAL.PassParameter.Gas_Liquid.Sum(i => i.Gas_LiquidCost);
+
+            FooterTotalClass.TotalFuelCost = DAL.PassParameter.Fuel.Sum(i => i.FuelCost);
+
+
+
+
+
+
+
+        }
         public FarmCycle()
         {
             InitializeComponent();
@@ -49,7 +186,7 @@ namespace Warehouse_Manage.Pages
 
             CycleDataview.Visibility = Visibility.Collapsed;
 
-
+            DataContext = FooterTotalClass;
 
         }
 
@@ -96,6 +233,10 @@ namespace Warehouse_Manage.Pages
 
 
             txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = txtFarmSupervisor.Text = "";
+
+           
+
+           
         }
 
 
@@ -106,16 +247,16 @@ namespace Warehouse_Manage.Pages
             txtEmployeename.Text = txtBirdNumber.Text = txtBirdDead.Text = txtFeederCount.Text = txtWaterCount.Text = txtCarpentryCount.Text = txtFarmSupervisor.Text = "";
 
 
-            txtEmployeeState.SelectedIndex = -1;
+            //txtEmployeeState.SelectedIndex = -1;
 
 
-            txtEmployeeSalary.Text = txtCostBird.Text= txtCostDead.Text=
-                txtCostWater.Text= txtCostFeeder.Text= txtCostCarpentry.Text= 
-                txtElectricityCost.Text= txtElectricityNote.Text= txtMaintenanceCost.Text= 
-                txtMaintenanceNote.Text= txtMiscellaneousCost.Text= txtMiscellaneousNote.Text
-                = txtFuelCost.Text= txtFuelNote.Text= txtGas_CylinderCost.Text= txtGas_CylinderNote.Text=
-                txtGas_LiquidCost.Text= txtGas_LiquidNote.Text= txtPharmaceuticalName.Text= 
-                txtPharmaceuticalQTY.Text= txtPharmaceuticalCostPrice.Text= txtPharmaceuticalNote.Text
+            txtEmployeeSalary.Text = txtCostBird.Text = txtCostDead.Text =
+                txtCostWater.Text = txtCostFeeder.Text = txtCostCarpentry.Text =
+                txtElectricityCost.Text = txtElectricityNote.Text = txtMaintenanceCost.Text =
+                txtMaintenanceNote.Text = txtMiscellaneousCost.Text = txtMiscellaneousNote.Text
+                = txtFuelCost.Text = txtFuelNote.Text = txtGas_CylinderCost.Text = txtGas_CylinderNote.Text =
+                txtGas_LiquidCost.Text = txtGas_LiquidNote.Text = txtPharmaceuticalName.Text =
+                txtPharmaceuticalQTY.Text = txtPharmaceuticalCostPrice.Text = txtPharmaceuticalNote.Text
 
                 = "";
         }
@@ -217,7 +358,9 @@ namespace Warehouse_Manage.Pages
             SelectedFarmsCycle = Check;
 
             //عرض تاريخ بداية الدورة
-            txtDateStartCycle.Text = SelectedFarmsCycle.DateStart.ToString("M/dd/yyyy");
+            txtDateStartCycle.SelectDate = SelectedFarmsCycle.DateStart;
+
+           
 
 
             //عرض رقم الدورة
@@ -243,6 +386,7 @@ namespace Warehouse_Manage.Pages
 
             //عرض بيانات العمال المدخلين سابقا
             EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
+
 
 
 
@@ -380,11 +524,16 @@ namespace Warehouse_Manage.Pages
 
 
 
-
+            ClearTotalFooter();
 
             //عرض الواجهة
             CycleDataview.Visibility = Visibility.Visible;
+
+            txtFarmSupervisor.Focus();
         }
+
+
+      
 
         private async void SaveData_Click(object sender, RoutedEventArgs e)
         {
@@ -418,9 +567,9 @@ namespace Warehouse_Manage.Pages
                         var data = (Tables.Farms)FarmName.SelectedItem;
 
                         DateTime CycleEndDateTime = new DateTime(
-                            DateTime.Parse(txtDateEndCycle.SelectedDate.ToString()).Year,
-                            DateTime.Parse(txtDateEndCycle.SelectedDate.ToString()).Month,
-                            DateTime.Parse(txtDateEndCycle.SelectedDate.ToString()).Day,
+                            DateTime.Parse(txtDateEndCycle.SelectDate.ToString()).Year,
+                            DateTime.Parse(txtDateEndCycle.SelectDate.ToString()).Month,
+                            DateTime.Parse(txtDateEndCycle.SelectDate.ToString()).Day,
                           DateTime.Now.Hour,
                             DateTime.Now.Minute,
                              DateTime.Now.Second);
@@ -434,7 +583,7 @@ namespace Warehouse_Manage.Pages
                             CycleID = SelectedFarmsCycle.CycleID,
                             FarmID = data.FarmID,
                             FarmStrNumber = txtCycleStrID.Text,
-                            DateStart = DAL.PassParameter.GetDateWithCurrentTime(txtDateStartCycle.SelectedDate.Value),
+                            DateStart = DAL.PassParameter.GetDateWithCurrentTime(txtDateStartCycle.SelectDate),
                             CycleClose = (bool)btnCloseCycle.IsChecked ? true : false,
                             DateEnd = (bool)btnCloseCycle.IsChecked ? CycleEndDateTime : new DateTime(1, 1, 1),
                             DateEnter = SelectedFarmsCycle.DateEnter,
@@ -574,7 +723,7 @@ namespace Warehouse_Manage.Pages
                     FarmID = SelectedFarm.FarmID,
                     FarmStrNumber = txtCycleStrID.Text,
                     DateEnter = DateTime.Now,
-                    DateStart = DAL.PassParameter.GetDateWithCurrentTime(txtDateStartCycle.SelectedDate.Value),
+                    DateStart = DAL.PassParameter.GetDateWithCurrentTime(txtDateStartCycle.SelectDate),
                     FarmSupervisor = txtFarmSupervisor.Text
                 };
 
@@ -602,9 +751,9 @@ namespace Warehouse_Manage.Pages
         private void EmployeeAdd_Click(object sender, RoutedEventArgs e)
         {
 
-          
 
-             if (txtEmployeename.Text == "")
+
+            if (txtEmployeename.Text == "")
             {
                 new Pages.MessageBoxWindows("خطا في الادخال", "الرجاء ادخال اسم العامل").ShowDialog();
                 txtEmployeename.Focus();
@@ -625,13 +774,13 @@ namespace Warehouse_Manage.Pages
             {
                 new Pages.MessageBoxWindows("الرجاء ادخال تاريخ الاضافة بشكل صحيح بشكل كافي").ShowDialog();
 
-               
+
                 return;
             }
             else if (DAL.Validations.IsDate(txtDateRemove.SelectedDate.Value.ToString()) == false)
             {
                 new Pages.MessageBoxWindows("الرجاء ادخال تاريخ الخروج بشكل صحيح بشكل كافي").ShowDialog();
-            
+
                 return;
             }
             if (txtEmployeeSalary.Text != "")
@@ -664,10 +813,12 @@ namespace Warehouse_Manage.Pages
                 EmployeeAdd.Content = "اضافة";
 
                 txtEmployeename.Text = txtEmployeeState.Text = txtEmployeeSalary.Text = "";
-                txtEmployeeState.SelectedIndex = -1;
+               
 
                 EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
                 UpdateEmployee = false;
+
+                ClearTotalFooter();
 
                 return;
             }
@@ -689,15 +840,14 @@ namespace Warehouse_Manage.Pages
             txtEmployeeState.SelectedIndex = -1;
 
 
+            ClearTotalFooter();
 
 
-            EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
         }
 
         private void btnAddBird_Click(object sender, RoutedEventArgs e)
         {
-
-
+            
             if (txtBirdNumber.Text == "")
             {
                 new Pages.MessageBoxWindows("الرجاء ادخال عدد الصوص").ShowDialog();
@@ -741,7 +891,16 @@ namespace Warehouse_Manage.Pages
 
 
             BirdList.ItemsSource = DAL.PassParameter.BirdsList;
+
+            ClearTotalFooter();
+
+
+
         }
+
+
+       
+            
 
         private void btnBirdDead_Click(object sender, RoutedEventArgs e)
         {
@@ -781,6 +940,8 @@ namespace Warehouse_Manage.Pages
 
 
             BirdDeadList.ItemsSource = DAL.PassParameter.BirdsDead;
+
+            ClearTotalFooter();
         }
 
         private void btnFeederAdd_Click(object sender, RoutedEventArgs e)
@@ -828,6 +989,8 @@ namespace Warehouse_Manage.Pages
 
 
             ListFeeders.ItemsSource = DAL.PassParameter.Feeders;
+
+            ClearTotalFooter();
         }
 
         private void btnAddWater_Click(object sender, RoutedEventArgs e)
@@ -868,6 +1031,8 @@ namespace Warehouse_Manage.Pages
 
 
             ListWaters.ItemsSource = DAL.PassParameter.Waters;
+
+            ClearTotalFooter();
         }
 
         private void btnCarpentryAdd_Click(object sender, RoutedEventArgs e)
@@ -905,10 +1070,12 @@ namespace Warehouse_Manage.Pages
 
             });
 
-            txtCarpentryCount.Text = "";
+            txtCarpentryCount.Text=txtCostCarpentry.Text = "";
 
 
             ListCarpentrys.ItemsSource = DAL.PassParameter.Carpentrys;
+
+            ClearTotalFooter();
         }
         private void btnAddElectricity_Click(object sender, RoutedEventArgs e)
         {
@@ -944,6 +1111,8 @@ namespace Warehouse_Manage.Pages
 
 
             ListElectricity.ItemsSource = DAL.PassParameter.Electricity;
+
+            ClearTotalFooter();
         }
 
         private void btnAddMaintenance_Click(object sender, RoutedEventArgs e)
@@ -980,6 +1149,8 @@ namespace Warehouse_Manage.Pages
 
 
             ListMaintenance.ItemsSource = DAL.PassParameter.Maintenance;
+
+            ClearTotalFooter();
         }
 
         private void btnAddMiscellaneousCost_Click(object sender, RoutedEventArgs e)
@@ -1016,6 +1187,8 @@ namespace Warehouse_Manage.Pages
 
 
             ListMiscellaneous.ItemsSource = DAL.PassParameter.Miscellaneous;
+
+            ClearTotalFooter();
         }
 
         private void FuelCLickManage(object sender, RoutedEventArgs e)
@@ -1152,6 +1325,8 @@ namespace Warehouse_Manage.Pages
 
 
             }
+            ClearTotalFooter();
+
         }
 
 
@@ -1184,17 +1359,24 @@ namespace Warehouse_Manage.Pages
                 return;
             }
 
+
+           
+
+
+
+
             DAL.PassParameter.Pharmaceutical.Add(new Tables.Pharmaceutical
             {
-               PharmaceuticalID=Guid.NewGuid(),
-                DateAdd=txtPharmaceuticalDate.SelectedDate.Value,
+                PharmaceuticalID = Guid.NewGuid(),
+                DateAdd = txtPharmaceuticalDate.SelectedDate.Value,
                 FarmID = SelectedFarmsCycle.FarmID,
-                cycleID = SelectedFarmsCycle.CycleID,CostPrice=double.Parse(txtPharmaceuticalCostPrice.Text),
-                PharmaceuticalQty=double.Parse(txtPharmaceuticalQTY.Text),
-                TotalCost=(double.Parse(txtPharmaceuticalCostPrice.Text) *double.Parse(txtPharmaceuticalQTY.Text)),
-                PharmaceuticalNote=txtPharmaceuticalNote.Text,
-                MedID= MedNames.MedID,
-                MedName = MedNames.MedName
+                cycleID = SelectedFarmsCycle.CycleID,
+                CostPrice = double.Parse(txtPharmaceuticalCostPrice.Text),
+                PharmaceuticalQty = double.Parse(txtPharmaceuticalQTY.Text),
+                TotalCost = (double.Parse(txtPharmaceuticalCostPrice.Text) * double.Parse(txtPharmaceuticalQTY.Text)),
+                PharmaceuticalNote = txtPharmaceuticalNote.Text,
+                MedID = FooterTotalClass.SelectedMed.MedID,
+                MedName = FooterTotalClass.SelectedMed.MedName
 
             });
 
@@ -1204,6 +1386,8 @@ namespace Warehouse_Manage.Pages
 
 
             ListPharmaceutical.ItemsSource = DAL.PassParameter.Pharmaceutical;
+
+            ClearTotalFooter();
         }
 
 
@@ -1280,6 +1464,9 @@ namespace Warehouse_Manage.Pages
                             DAL.PassParameter.EmployeesList.Remove(Employees);
 
                             EmployeeList.ItemsSource = DAL.PassParameter.EmployeesList.OrderBy(i => i.EmployeeID);
+
+                           
+
                         }
 
                         break;
@@ -1301,6 +1488,8 @@ namespace Warehouse_Manage.Pages
 
                         SelectedEmployee = Employees;
 
+                      
+
                         break;
 
                     case "Birds":
@@ -1310,6 +1499,8 @@ namespace Warehouse_Manage.Pages
                             DAL.PassParameter.BirdsList.Remove(Birds);
 
                             BirdList.ItemsSource = DAL.PassParameter.BirdsList;
+
+                           
                         }
 
                         break;
@@ -1320,6 +1511,9 @@ namespace Warehouse_Manage.Pages
                             DAL.PassParameter.BirdsDead.Remove(BirdsDead);
 
                             BirdDeadList.ItemsSource = DAL.PassParameter.BirdsDead;
+
+                           
+
                         }
 
                         break;
@@ -1428,6 +1622,8 @@ namespace Warehouse_Manage.Pages
 
 
                 }
+
+                ClearTotalFooter();
             }
 
 
@@ -1442,10 +1638,19 @@ namespace Warehouse_Manage.Pages
         DAL.MedNames MedNames = new DAL.MedNames();
         private void txtPharmaceuticalName_KeyDown(object sender, KeyEventArgs e)
         {
+            //MessageBox.Show(e.Key.ToString());
+            //return;
+          
+            if (e.Key == Key.OemQuestion && Keyboard.IsKeyDown(Key.RightShift))
+            {
+                
+              
+                FooterTotalClass.ViewPharmaceuticalList = true;
+                e.Handled = true;
+            }
 
-           
-
-            if (e.Key==Key.Enter)
+            return;
+            if (e.Key == Key.Enter)
             {
                 if (txtPharmaceuticalName.Text == "")
                 {
@@ -1458,14 +1663,27 @@ namespace Warehouse_Manage.Pages
                     new Pages.MessageBoxWindows("الرجاء ادخال رقم الدواء بشكل صحيح").ShowDialog();
                     return;
                 }
-                var query = new DAL.Queries().MedNames.Where(i => i.MedID == double.Parse(txtPharmaceuticalName.Text));
-                if (query.Count()>0)
-                {
-                    MedNames = query.FirstOrDefault(); 
-                    txtPharmaceuticalName.Text = MedNames.MedName;
-                    txtPharmaceuticalQTY.Focus();
-                }
-               
+                //var query = new DAL.Queries().MedNames.Where(i => i.MedID == double.Parse(txtPharmaceuticalName.Text));
+                //if (query.Count() > 0)
+                //{
+                //    MedNames = query.FirstOrDefault();
+                //    txtPharmaceuticalName.Text = MedNames.MedName;
+                //    txtPharmaceuticalQTY.Focus();
+                //}
+
+            }
+        }
+
+        private void Grid_KeyDown(object sender, KeyEventArgs e)
+        {
+            var uie = e.OriginalSource as UIElement;
+
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                uie.MoveFocus(
+                new TraversalRequest(
+                FocusNavigationDirection.Next));
             }
         }
     }

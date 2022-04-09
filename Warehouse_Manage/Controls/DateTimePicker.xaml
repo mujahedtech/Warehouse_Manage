@@ -1,0 +1,369 @@
+﻿<UserControl x:Class="Warehouse_Manage.Controls.DateTimePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Warehouse_Manage.Controls"
+             mc:Ignorable="d" 
+             xmlns:Con="clr-namespace:Warehouse_Manage.Convertors"
+             Unloaded="UserControl_Unloaded"
+            x:Name="DateTimeUC"
+             >
+    <UserControl.Resources>
+
+        <Con:ImageToSourceConverter x:Key="ImageToSourceConverter"/>
+        <Con:SelectedDate x:Key="SelectedDate"/>
+
+        <Style TargetType="{x:Type RadioButton}" x:Key="RadioButtonMenu">
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate  TargetType="{x:Type RadioButton}">
+                        <Border  BorderBrush="Transparent"  Name="border" BorderThickness="1">
+                            <Grid>
+                                <TextBlock  FontSize="15" HorizontalAlignment="Center" FontFamily="Nunito Sans" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" Name="btnText"  Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            </Grid>
+
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+
+                                <Setter Property="Background" TargetName="border" Value="gray" />
+                                <Setter Property="Foreground" TargetName="btnText" Value="White"/>
+                                <Setter Property="FontWeight" TargetName="btnText" Value="Bold"/>
+
+
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+
+
+                                <Setter Property="BorderThickness" TargetName="border" Value="1" />
+                                <Setter Property="BorderBrush" TargetName="border" Value="gray" />
+                                <Setter Property="Foreground" TargetName="btnText" Value="black"/>
+
+                            </Trigger>
+                            <Trigger Property="FontFamily" Value="True">
+                                <Setter Property="BorderThickness" TargetName="border" Value="1" />
+                                <Setter Property="BorderBrush" TargetName="border" Value="dodgerblue" />
+                                <Setter Property="Background" TargetName="border" Value="white" />
+                                <Setter Property="Foreground" TargetName="btnText" Value="dodgerblue"/>
+                            </Trigger>
+
+
+                            <Trigger Property="FontFamily" Value="Previous">
+
+                                <Setter Property="Foreground" TargetName="btnText" Value="LightGray"/>
+                            </Trigger>
+
+
+
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+
+        <Style TargetType="{x:Type TextBox}" >
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="DodgerBlue"/>
+            <Setter Property="FontFamily" Value="poppins"/>
+            <Setter Property="FontSize" Value="14"/>
+
+
+
+            <Setter Property="Cursor" Value="IBeam"/>
+
+            <Setter Property="AllowDrop" Value="True"/>
+
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+
+
+                        <Grid Margin="{TemplateBinding Padding}" x:Name="txtBorder">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                          Padding="{TemplateBinding Padding}"
+                          BorderThickness="0" 
+                          Focusable="False" 
+                          Margin="2" 
+                          Background="{x:Null}"
+                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+
+                            <Label x:Name="WaterMarkerLabel"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       VerticalContentAlignment="Center"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       Visibility="Collapsed"
+                                       Foreground="#9FA9BC"
+                                       Padding="{TemplateBinding Padding}"
+                                       Content="{TemplateBinding Uid}"
+                                       FontSize="12"
+                                    Margin="5,0,0,0"
+                                    />
+                        </Grid>
+
+
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="WaterMarkerLabel" Property="Visibility" Value="Visible"/>
+                            </MultiTrigger>
+
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="FontFamily" Value="Edit"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="txtBorder" Property="Background" Value="#d4d4d4"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+
+        </Style>
+
+
+        <Style TargetType="{x:Type ToggleButton}" x:Key="ToggleAsImageWithHint">
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Grid VerticalAlignment="Center" Background="Transparent" Name="border">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Image Name="image1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="30" Width="50"  Stretch="Uniform"  />
+
+
+
+                            <Popup Grid.Row="0" Name="pophint" IsOpen="False" AllowsTransparency="True" PlacementTarget="{Binding ElementName=border}" Placement="Center">
+                                <Grid >
+                                    <Border Margin="0,0,0,60" BorderBrush="LightGray" BorderThickness="1" Background="White" CornerRadius="5">
+                                        <Grid >
+                                            <Label Content="{TemplateBinding FontFamily}"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+
+                            </Popup>
+                        </Grid>
+                        <!--<ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="border" Value="WhiteSmoke" />
+
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource MenuColor}" />
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>-->
+
+                        <ControlTemplate.Triggers>
+
+
+
+                            <Trigger Property="IsChecked" Value="True" >
+
+
+
+
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
+                                        <Storyboard>
+                                            <DoubleAnimation 
+                                                               Storyboard.TargetName="border"
+                                                               Storyboard.TargetProperty="(Border.Opacity)" 
+                                                               From="1" To="0" Duration="0:0:.1" AutoReverse="True" />
+
+
+
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation 
+                                                               Storyboard.TargetName="border"
+                                                               Storyboard.TargetProperty="(Border.Opacity)" 
+                                                               From="0" To="1" Duration="0:0:.1"   />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+
+
+
+                            </Trigger>
+
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="pophint" Property="IsOpen" Value="true"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+
+
+                            <Trigger Property="Uid" Value="Cal">
+                                <Setter TargetName="image1" Property="Source" Value="pack://application:,,,/Images/Calender.png"/>
+
+                            </Trigger>
+                            <Trigger Property="Uid" Value="Up">
+                                <Setter TargetName="image1" Property="Source" Value="pack://application:,,,/Images/Up.png"/>
+
+                            </Trigger>
+                            <Trigger Property="Uid" Value="Down">
+                                <Setter TargetName="image1" Property="Source" Value="pack://application:,,,/Images/Down.png"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+
+
+
+
+
+    </UserControl.Resources>
+
+    <Grid Name="DateGrid" Height="30">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
+
+
+
+
+        <Border x:Name="txtBorder" Grid.ColumnSpan="2"
+                                SnapsToDevicePixels="True"
+                                CornerRadius="5"
+                                BorderThickness="1"
+                                Background="White"
+                                BorderBrush="#d4d4d4"
+                                />
+
+
+
+
+
+
+
+
+
+        <TextBox  IsReadOnly="True"  Text="{Binding SelectDate,StringFormat=yyyy/MM/dd}"  Foreground="Gray"  VerticalAlignment="Center" MinWidth="50"  BorderThickness="0" BorderBrush="Transparent"/>
+
+        <ToggleButton LostFocus="ToggleButton_LostFocus"   VerticalAlignment="Center" Click="SelecDatebtn_Click"   Grid.Column="1"  Style="{StaticResource ToggleAsImageWithHint}" FontFamily="Select Date"  Uid="Cal" />
+
+        <Popup  Placement="Bottom" PlacementTarget="{Binding ElementName=DateGrid}"  IsOpen="False" StaysOpen="False"  AllowsTransparency="True" Name="ViewDate">
+            <Grid>
+                <Border Margin="0,10,80,0" BorderBrush="Gray" BorderThickness="1"  >
+                    <Grid Margin="2" Background="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition  Width="35"/>
+                            <ColumnDefinition  Width="35"/>
+                            <ColumnDefinition  Width="35"/>
+                            <ColumnDefinition  Width="35"/>
+                            <ColumnDefinition  Width="35"/>
+                            <ColumnDefinition  Width="35"/>
+                            <ColumnDefinition  Width="35"/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="الاحد" HorizontalAlignment="Center"     Grid.Column="0" Grid.Row="1"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="الاثنين" HorizontalAlignment="Center"     Grid.Column="1" Grid.Row="1"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="الثلاثاء" HorizontalAlignment="Center"    Grid.Column="2" Grid.Row="1"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="الاربعاء" HorizontalAlignment="Center"  Grid.Column="3" Grid.Row="1"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="الخميس" HorizontalAlignment="Center"   Grid.Column="4" Grid.Row="1"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="الجمعة" HorizontalAlignment="Center"     Grid.Column="5" Grid.Row="1"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="10" Text="السبت" HorizontalAlignment="Center"   Grid.Column="6" Grid.Row="1"/>
+
+
+                        <ItemsControl Width="245"  Grid.Row="2" Grid.RowSpan="6" Grid.ColumnSpan="7"  Background="White" Name="listCategories" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Visibility="{Binding Day,Converter={StaticResource SelectedDate}}" Background="Transparent" Margin="1">
+                                        <RadioButton   HorizontalAlignment="Left"
+                                      Style="{StaticResource RadioButtonMenu}"
+                                      GroupName="1" Height="30"
+                                      Width="33" 
+                                      Content="{Binding Day}" 
+                                               Click="SetDateSelected"
+                                               CommandParameter="{Binding .}"
+                                               Foreground="Black"
+                                              IsChecked="{Binding Selected}"
+                                               FontFamily="{Binding Path=MyDate}"
+                                                      
+                                               />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                       
+
+                        <Grid Background="White" Grid.Row="0" Grid.ColumnSpan="7">
+                            <TextBlock Text="{Binding SelectDate,StringFormat=MMMM yyyy}" Margin="5,0"  Grid.Column="1" Grid.ColumnSpan="4" FontSize="15" Foreground="Gray"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                            <StackPanel Height="30" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <ToggleButton FontFamily="Next" Click="PreviousMonth" Width="30" Uid="Up" HorizontalAlignment="Right" Style="{StaticResource ToggleAsImageWithHint}"/>
+                                <Grid Width="10"/>
+                                <ToggleButton FontFamily="Back" Click="NextMonth" Width="30" Uid="Down" HorizontalAlignment="Right" Style="{StaticResource ToggleAsImageWithHint}"/>
+                            </StackPanel>
+
+
+                        </Grid>
+
+
+                    </Grid>
+                </Border>
+            </Grid>
+
+        </Popup>
+
+    </Grid>
+</UserControl>

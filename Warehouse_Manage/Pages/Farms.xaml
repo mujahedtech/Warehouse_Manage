@@ -18,7 +18,7 @@
 
 
             </Grid.RowDefinitions>
-            <Button Content="اضافة مزرعة"   Grid.Row="0" Style="{StaticResource StandardButtonSound}" Name="AddFarm" Click="AddFarm_Click" />
+            <Button MinWidth="120" HorizontalAlignment="Left" Content="اضافة مزرعة"   Grid.Row="0" Style="{StaticResource StandardButtonSound}" Name="AddFarm" Click="AddFarm_Click" />
 
 
             <Border Margin="0" CornerRadius="3" Padding="5" Grid.Row="2" Style="{StaticResource ShadowBorder}">
@@ -101,15 +101,16 @@
 
 
 
-                            <DataGridTemplateColumn  Width="200" >
+                            <DataGridTemplateColumn  Width="100" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
 
-                                        <Button CommandParameter="{Binding .}" Click="EditFarm_Click" Name="EditFarm" Width="200" HorizontalAlignment="Center"  Content="تعديل" Style="{StaticResource StandardButtonSound}"/>
+                                        <Button CommandParameter="{Binding .}" Click="EditFarm_Click" Name="EditFarm" Width="200" HorizontalAlignment="Center"  Content="تعديل" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
+                        
                             <!--<DataGridTextColumn  Header="{Binding Cityid,Source={StaticResource MVVM}}"       />
                             <DataGridTextColumn Header="{Binding Countryid,Source={StaticResource MVVM}}"      />
                             <DataGridTextColumn Header="{Binding Facebook,Source={StaticResource MVVM}}"        />
@@ -141,7 +142,7 @@
 
 
         <Popup Name="AddFarmPop"  PopupAnimation="Slide" AllowsTransparency="True" Placement="Center"  MinWidth="350" Margin="20"  >
-            <Border Style="{StaticResource ShadowBorder}"   CornerRadius="10" >
+            <Border Style="{StaticResource ShadowBorder}"   CornerRadius="0" >
 
 
                 <Grid>
@@ -167,7 +168,7 @@
 
                     </Grid.RowDefinitions>
 
-                    <Border Style="{StaticResource ShadowBorderHeader}"   Grid.ColumnSpan="19" Grid.RowSpan="2" />
+                    <Border Background="LightGray"  VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Height="2" />
 
                     <TextBlock Name="lblHeader" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" FontSize="20" FontWeight="SemiBold"  Text="اضافة مزرعة جديدة" Style="{StaticResource TitleHomePage }"/>
 
@@ -179,8 +180,6 @@
 
 
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="3">
-                        <Button Content="الغاء الامر" Click="CloseAddFarm_Click" MinWidth="103"  Height="30"  Style="{StaticResource  StandardButtonWhite }"/>
-                        <Grid Width="15"/>
                         <Button Click="btnAddFarm_Click" Name="btnAddFarm" Content="تخزين"    Style="{StaticResource StandardButtonSound}"/>
                     </StackPanel>
 

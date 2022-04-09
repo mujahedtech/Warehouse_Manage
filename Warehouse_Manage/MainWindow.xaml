@@ -27,31 +27,52 @@
                     <Grid FlowDirection="LeftToRight" Grid.Row="0" Background="{StaticResource MainColor}"  MouseLeftButtonDown="Grid_MouseLeftButtonDown">
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20 0">
-                            <Button Click="btnTopButtons" Uid="2" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
+                            <Button Click="btnTopButtons" Uid="2" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
                                 <materialDesign:PackIcon  Kind="WindowMinimize" Foreground="White" Width="25" Height="25" />
                             </Button>
-                            <Button Visibility="Visible"  Click="btnTopButtons" Uid="0" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
+                            <Button Visibility="Visible"  Click="btnTopButtons" Uid="0" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
                                 <materialDesign:PackIcon Name="PackIconWindowsState" Kind="WindowMaximize" Foreground="White" Width="25" Height="25" />
                             </Button>
-                            <Button Click="btnTopButtons" Uid="1" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
+                            <Button Click="btnTopButtons" Uid="1" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
                                 <materialDesign:PackIcon Kind="Power" Foreground="White" Width="25" Height="25" />
                             </Button>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10 0 0 0">
-                            <Button Click="btnTopButtons" Uid="3" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
+                            <Button Click="btnTopButtons" Visibility="Collapsed" Uid="3" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
                                 <materialDesign:PackIcon  Kind="Update" Foreground="White" Width="25" Height="25" />
                             </Button>
-                            <Button Click="btnTopButtons" Uid="4" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}">
-                                <materialDesign:PackIcon  Kind="FolderMydrive" Foreground="White" Width="25" Height="25" />
-                            </Button>
-                            <Border BorderThickness="1" BorderBrush="White" Margin="0,3" CornerRadius="10" Padding="10,0">
+                          
+                            <Border Visibility="Collapsed" BorderThickness="1" BorderBrush="White" Margin="0,3" CornerRadius="10" Padding="10,0">
                                 <TextBlock   VerticalAlignment="Center" Foreground="White" FontSize="20"   Name="lblTime"/>
                             </Border>
 
 
-                            <materialDesign:Card Margin="10,3" BorderThickness="1" BorderBrush="White" Padding="10,0">
+                            <materialDesign:Card Visibility="Collapsed" Margin="10,3" BorderThickness="1" BorderBrush="White" Padding="10,0">
                                 <TextBox  FlowDirection="RightToLeft" Background="White" Width="300"  MaxWidth="300"  VerticalContentAlignment="Center" Foreground="Black" FontSize="15" Name="txtClip"/>
                             </materialDesign:Card>
+                            
+                            <Button Visibility="Collapsed" Click="btnTopButtons" Uid="5" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
+                                <materialDesign:PackIcon  Kind="Printer" Foreground="White" Width="25" Height="25" />
+                            </Button>
+
+
+                            <materialDesign:Card  FlowDirection="RightToLeft" Margin="10,3" BorderThickness="1" BorderBrush="White" Padding="10,0">
+                                <ComboBox  Background="White" MinWidth="100"   VerticalContentAlignment="Center" Foreground="Black" FontSize="15" Name="txtPrinter"/>
+                            </materialDesign:Card>
+
+                            <Button Click="btnTopButtons" Uid="6" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
+                                <materialDesign:PackIcon  Kind="PrinterCheck" Foreground="White" Width="25" Height="25" />
+                            </Button>
+
+                            <Button Margin="20,0" Click="btnTopButtons" Uid="4" Background="{x:Null}" BorderBrush="{x:Null}" VerticalAlignment="Center" >
+                                <materialDesign:PackIcon  Kind="FolderMydrive" Foreground="White" Width="25" Height="25" />
+                            </Button>
+
+                            <Grid Margin="0,10" Width="100" Name="GridProgress">
+                                
+                            </Grid>
+                           
+
                         </StackPanel>
                     </Grid>
                     <Grid  Grid.Row="1" Name="GridNameButtons" Margin="5 0">

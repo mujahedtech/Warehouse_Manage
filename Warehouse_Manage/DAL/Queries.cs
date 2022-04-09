@@ -20,10 +20,10 @@ namespace Warehouse_Manage.DAL
     class Queries
     {
 
-        private List<MedNames> medNames;
+        private static List<MedNames> medNames;
 
 
-        public List<MedNames> MedNames 
+          static List<MedNames> MedNames 
         { 
             get
             {
@@ -646,6 +646,8 @@ namespace Warehouse_Manage.DAL
             } 
         }
 
-        
+
+
+        public static ObservableCollection<MedNames> Ts = new System.Collections.ObjectModel.ObservableCollection<MedNames>(MedNames);
     }
 }

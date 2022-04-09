@@ -1,0 +1,455 @@
+﻿<UserControl x:Class="Warehouse_Manage.Reports.MainReport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Warehouse_Manage.Reports" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="800"
+             FlowDirection="LeftToRight"
+             >
+    <UserControl.Resources>
+        <Style TargetType="TextBox" x:Key="TextboxReport">
+            <Setter Property="IsReadOnly" Value="True"/>
+
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBlock">
+
+
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+
+        </Style>
+
+
+        <Style x:Key="ButtonReport" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Name="border"  >
+                            <Label HorizontalContentAlignment="Center"  FontFamily="Nunito Sans" Content="{TemplateBinding Content}" FontSize="14" FontWeight="{TemplateBinding FontWeight}"  Foreground="{TemplateBinding Foreground}"/>
+                        </Grid>
+
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="WhiteSmoke"/>
+                                <Setter  Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <Style x:Key="RadioReport" TargetType="{x:Type RadioButton}">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Label HorizontalContentAlignment="Center"  FontFamily="Nunito Sans" Content="{TemplateBinding Content}" FontSize="14"  Foreground="DarkGray"/>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+    </UserControl.Resources>
+    <Grid Background="White">
+
+
+        <Border FlowDirection="RightToLeft" Visibility="Collapsed" Name="oldReport" Padding="10" Style="{StaticResource ShadowBorder}" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition />
+                    <RowDefinition Height="10"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="10"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="اسم المزرعة"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="رقم الدورة"/>
+
+
+                <ComboBox SelectedIndex="0" Grid.Row="1" Grid.Column="3"  Name="ComboFarms" SelectionChanged="ComboFarms_SelectionChanged" DisplayMemberPath="FarmName" ItemsSource="{Binding FarmsList}" MinWidth="100"/>
+
+
+                <ComboBox  SelectedIndex="0" Grid.Row="3" Grid.Column="3"  Name="ComboCycleNumber" DisplayMemberPath="FarmStrNumber" SelectionChanged="ComboCycleNumber_SelectionChanged" MinWidth="100" IsEnabled="False"/>
+
+                <Button  Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Click="btnStartReports_Click" Name="btnStartReports" Padding="5" Content="عرض التقرير" IsEnabled="{Binding ElementName=ComboCycleNumber,Path=IsEnabled}"/>
+
+
+            </Grid>
+
+
+        </Border>
+
+
+
+        <ScrollViewer Visibility="{Binding ElementName=NewReport,Path=Visibility}" VerticalScrollBarVisibility="Hidden">
+
+            <Border Width="780" Name="NewReport"  Visibility="Visible"  BorderThickness="2" BorderBrush="Black" Margin="10">
+                <StackPanel  Name="StackReport">
+                    <Grid Height="10"/>
+                    <TextBlock  FontSize="20" FontWeight="Bold" HorizontalAlignment="Center">
+                  
+                
+                  
+                       <Run Text="اسم المزرعة"/>
+                        
+                            <Run Text=":"/>
+                        
+                         <Run Text="{Binding FarmName}" FontWeight="Bold"/>
+                    </TextBlock>
+                    <StackPanel Name="Stak2" HorizontalAlignment="Center" Margin="0,5" Orientation="Horizontal">
+
+
+
+                        <TextBlock Margin="10,0,0,0" FontSize="20"  HorizontalAlignment="Center">
+                 
+                  
+                    <Run Text="{Binding EmployeeNumber}" FontWeight="Bold"/> 
+                        <Run Text=":"/> 
+                        <Run Text="عدد العمال"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="10,0,0,0" FontSize="20"  HorizontalAlignment="Center">
+                        
+                     <Run Text="اسم المشرف"/>
+                    <Run Text=":"/>
+                  
+                         <Run Text="{Binding SuperVisorName}" FontWeight="Bold"/>
+                        </TextBlock>
+
+
+                        <TextBlock Margin="10,0,0,0"  FontSize="20"  HorizontalAlignment="Center">
+                           <Run Text="{Binding CycleName}" FontWeight="Bold"/>
+                           <Run Text=":"/>
+                    <Run Text="رقم الدورة"/>
+
+
+                        </TextBlock>
+
+
+
+
+
+
+                    </StackPanel>
+
+                    <Grid Width="{Binding ElementName=Stak2,Path=ActualWidth}" Height="1" Background="Black"/>
+
+                    <StackPanel Name="Stak1" HorizontalAlignment="Center" Margin="0,5" Orientation="Horizontal">
+
+
+                        <TextBlock Margin="0,0,20,0" FontSize="20"  HorizontalAlignment="Center">
+                 
+                    <Run Text="{Binding BirdDeadQTY}" FontWeight="Bold"/>
+                          <Run Text=":"/>
+                   <Run Text="الوفيات خلال الدورة"/>
+
+                        </TextBlock>
+                        <TextBlock  FontSize="20"  HorizontalAlignment="Center">
+                            <Run Text="{Binding BirdDate}" FontWeight="Bold"/>
+                  
+                    <Run Text=":"/>
+                  <Run Text="تاريخ الصوص"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="20,0,0,0" FontSize="20"  HorizontalAlignment="Center">
+                         <Run Text="{Binding BirdQTY}" FontWeight="Bold"/>
+                         <Run Text=":"/>
+                    <Run Text="عدد الصوص"/>
+
+
+
+                        </TextBlock>
+
+
+
+
+                    </StackPanel>
+
+                    <Grid Width="{Binding ElementName=Stak1,Path=ActualWidth}" Height="1" Background="Black"/>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,5" Orientation="Horizontal">
+                        <TextBlock Margin="0,0,20,0" FontSize="20"  HorizontalAlignment="Center">
+                  
+                 
+                    <Run Text="{Binding TotalExpense}" FontWeight="Bold"/>
+                           <Run Text=":"/>
+                          <Run Text="مجموع المصاريف"/>
+                        </TextBlock>
+
+
+
+
+
+                    </StackPanel>
+
+
+                    <Grid Width="{Binding ElementName=Stak2,Path=ActualWidth}" Height="1" Background="Black"/>
+
+                    <Border BorderBrush="LightGray"  Padding="5" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5">
+
+
+                        <StackPanel>
+
+                            <ListBox  HorizontalContentAlignment="Stretch">
+                                <ListBox.Template>
+                                    <ControlTemplate>
+                                        <DockPanel LastChildFill="True">
+                                            <Grid DockPanel.Dock="Top" Height="30">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border BorderThickness="1,1,0,1" Grid.Column="4" BorderBrush="Gray" >
+                                                    <TextBlock  Text="البيان" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Nunito Sans"  FontSize="15" FontWeight="Bold"  Foreground="Black" />
+                                                </Border>
+                                                <Border BorderThickness="1,1,0,1" Grid.Column="3" BorderBrush="Gray" >
+                                                    <TextBlock  Text="الكمية" VerticalAlignment="Center"  HorizontalAlignment="Center" FontFamily="Nunito Sans"  FontSize="15" FontWeight="Bold"  Foreground="Black" />
+                                                </Border>
+                                                <Border BorderThickness="1,1,0,1" Grid.Column="2" BorderBrush="Gray" >
+                                                    <TextBlock  Text="السعر" VerticalAlignment="Center"  HorizontalAlignment="Center" FontFamily="Nunito Sans"  FontSize="15" FontWeight="Bold"  Foreground="Black" />
+                                                </Border>
+                                                <Border BorderThickness="1,1,0,1" Grid.Column="1" BorderBrush="Gray" >
+                                                    <TextBlock  Text="الكلفة" VerticalAlignment="Center"  HorizontalAlignment="Center" FontFamily="Nunito Sans"  FontSize="15" FontWeight="Bold"  Foreground="Black" />
+                                                </Border>
+                                                <Border BorderThickness="1,1,1,1" Grid.Column="0" BorderBrush="Gray" >
+                                                    <TextBlock  Text="النسبة" VerticalAlignment="Center"  HorizontalAlignment="Center" FontFamily="Nunito Sans"  FontSize="15" FontWeight="Bold"  Foreground="Black" />
+                                                </Border>
+
+
+
+
+                                            </Grid>
+                                            <ItemsPresenter></ItemsPresenter>
+                                        </DockPanel>
+                                    </ControlTemplate>
+                                </ListBox.Template>
+
+                            </ListBox>
+
+
+                            <ItemsControl  Name="List1" ItemsSource="{Binding reportContents}" >
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+
+                                            </Grid.ColumnDefinitions>
+
+
+                                            <!--<Button Grid.Column="0" Style="{StaticResource ButtonReport }" Content="Mujahed"/>-->
+
+
+                                            <Border Visibility="Visible" BorderThickness="1,0,0,1" Grid.Column="4" BorderBrush="Gray" >
+                                                <!--<TextBox Text="{Binding Header}" HorizontalContentAlignment="Center" FontFamily="Nunito Sans"  FontSize="15"  Foreground="DarkGray" BorderThickness="0"/>-->
+
+                                                <Button CommandParameter="{Binding .}" Click="Button_Click" Grid.Column="0" Style="{StaticResource ButtonReport }" Content="{Binding Header}"  Foreground="Black" FontWeight="Bold" BorderBrush="Black" BorderThickness="1"/>
+
+
+
+                                            </Border>
+
+                                            <Border BorderThickness="1,0,0,1" Grid.Column="3"  BorderBrush="Gray"  >
+                                                <TextBlock  Text="{Binding QTY}" HorizontalAlignment="Center" VerticalAlignment="Center"  FontFamily="Nunito Sans"  FontSize="15"  Foreground="Black"  />
+                                            </Border>
+
+                                            <Border BorderThickness="1,0,0,1" Grid.Column="2"  BorderBrush="Gray" >
+                                                <TextBlock   Text="{Binding Cost}" HorizontalAlignment="Center" VerticalAlignment="Center"  FontFamily="Nunito Sans"  FontSize="15"  Foreground="Black"  />
+                                            </Border>
+
+                                            <Border BorderThickness="1,0,0,1" Grid.Column="1" BorderBrush="Gray">
+                                                <TextBlock   Text="{Binding Total,StringFormat={}0.000}" HorizontalAlignment="Center" VerticalAlignment="Center"  FontFamily="Nunito Sans"  FontSize="15"  Foreground="Black"  />
+                                            </Border>
+
+
+                                            <Border BorderThickness="1,0,1,1" Grid.Column="0" BorderBrush="Gray"  >
+                                                <!--<TextBox  Text="{Binding Percent,StringFormat={}{0:#0.00'%'}}" HorizontalContentAlignment="Center" FontFamily="Nunito Sans"  FontSize="15"  Foreground="DarkGray" BorderThickness="0" />-->
+
+                                                <TextBlock   Text="{Binding Percent,StringFormat=P0}" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Nunito Sans"  FontSize="15"  Foreground="Black"  />
+
+                                            </Border>
+
+
+
+
+
+
+
+
+
+
+
+
+                                            <Grid Grid.ColumnSpan="4"/>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+
+
+
+
+                        </StackPanel>
+
+
+
+
+
+
+
+                    </Border>
+
+
+
+
+
+
+
+
+                </StackPanel>
+
+
+
+
+            </Border>
+
+        </ScrollViewer>
+
+
+
+
+        <Popup FlowDirection="RightToLeft" IsOpen="{Binding ViewSales}" StaysOpen="False"  PopupAnimation="Slide" AllowsTransparency="True" Placement="Center"  MinWidth="350" Margin="20"  >
+            <Border Style="{StaticResource ShadowBorder}"   CornerRadius="10" >
+
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="{StaticResource ColumnsFirstWidth}"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="{StaticResource MainLabelHeight}"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition />
+                        <RowDefinition Height="20"/>
+                        <RowDefinition MinHeight="30"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition MinHeight="30"/>
+
+                        <RowDefinition Height="10"/>
+
+                    </Grid.RowDefinitions>
+
+                    <Border Background="LightGray"  VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Height="2" />
+
+                    <TextBlock Name="lblHeader" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" FontSize="20" FontWeight="SemiBold"  Text="ادخال المبيعات" Style="{StaticResource TitleHomePage }"/>
+
+
+
+                    <ToggleButton IsChecked="{Binding ViewSales}"  VerticalAlignment="Center" Grid.Column="3" Grid.Row="1"  Content="X" Height="30" Width="30" HorizontalAlignment="Right" Style="{StaticResource StandardButtonToggle}" Margin="0,0,5,0" />
+
+
+
+
+
+                    <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition/>
+
+                        </Grid.ColumnDefinitions>
+                        <TextBlock  Grid.Column="0" Text="ادخل المبيعات ب الكيلو" Style="{StaticResource textblockEdit}"/>
+
+                        <TextBox Text="{Binding SalesQty}"  Grid.Column="2" Style="{StaticResource EntryNewWithHint}" Uid="ادخل المبيعات ب الكيلو" Grid.ColumnSpan="3"/>
+
+                    </Grid>
+
+
+                    <Grid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition/>
+
+                        </Grid.ColumnDefinitions>
+                        <TextBlock  Grid.Column="0" Text="ادخل المبيعات ب الدينار" Style="{StaticResource textblockEdit}"/>
+
+                        <TextBox Text="{Binding SalesDinar}"  Grid.Column="2" Style="{StaticResource EntryNewWithHint}" Uid="ادخل المبيعات ب الدينار" Grid.ColumnSpan="3"/>
+
+                    </Grid>
+
+
+                    <Grid Background="{StaticResource GraySystem}" Height="1" Grid.Row="6" VerticalAlignment="Center" Grid.ColumnSpan="5"/>
+
+
+
+
+
+                    <Button MinWidth="100" HorizontalAlignment="Right" Click="btnSave_Click"  Name="btnSave" Grid.Column="3"   Grid.Row="7" Content="ادخال" Style="{StaticResource StandardButtonSound}"/>
+
+
+
+
+                </Grid>
+
+
+
+
+
+            </Border>
+
+        </Popup>
+
+
+        <Button Background="{x:Null}" Visibility="{Binding ElementName=NewReport,Path=Visibility}" Margin="20" Click="Button_Click_1" Uid="5"  BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                <materialDesign:PackIcon  Background="DodgerBlue"  Kind="Printer" Foreground="White" Width="25" Height="25" />
+
+        </Button>
+
+    </Grid>
+</UserControl>

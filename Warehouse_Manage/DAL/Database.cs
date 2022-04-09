@@ -18,7 +18,7 @@ namespace Warehouse_Manage.DAL
         public readonly SQLiteAsyncConnection _database;
 
 
-        private string Path = "MujahedTech.db3";
+        public static string Path = "MujahedTech.db3";
         public Database(string dbpath = "")
         {
             dbpath = Path;
@@ -303,6 +303,14 @@ namespace Warehouse_Manage.DAL
 
         }
 
+        #endregion
+
+
+
+        #region Reports
+
+
+       
         #endregion
 
 

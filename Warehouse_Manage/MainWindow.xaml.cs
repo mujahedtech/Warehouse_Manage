@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Warehouse_Manage.Reports;
+using Firebase.Storage;
 
 namespace Warehouse_Manage
 {
@@ -51,16 +55,17 @@ namespace Warehouse_Manage
         //}
 
 
-       
 
 
+
+        public static MainWindow Main;
         public MainWindow()
         {
             InitializeComponent();
 
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
 
-            
+            Main = this;
               GridMain.Children.Clear();
             GridMain.Children.Add(new Pages.Home());
 
@@ -95,10 +100,11 @@ namespace Warehouse_Manage
                     GridMain.Children.Add(new Pages.FarmCycle());
                     break;
                 case 3:
-                   
+                    GridMain.Children.Add(new Reports.MainReport());
                     break;
                 case 4:
                    
+
                     break;
                 case 5:
 
@@ -114,6 +120,9 @@ namespace Warehouse_Manage
 
             }
         }
+
+
+
         private void btnTopButtons(object sender, RoutedEventArgs e)
         {
             int index = int.Parse(((Button)e.Source).Uid);
@@ -149,12 +158,121 @@ namespace Warehouse_Manage
                     }
 
                     break;
+
                 case 4:
+                    //Here Upload
+
+                  
+
+
+
+                    string str = "سيتم رفع قاعدة البيانات مع البيانات التالية" + Environment.NewLine + Environment.NewLine;
+                    str += "اسم الجهاز الذي قام برفع قاعدة البيانات " + System.Environment.MachineName + Environment.NewLine + Environment.NewLine;
+                   
+
+
+                    new Pages.MessageBoxWindows(str,"رفع قاعدة البيانات الى السيرفر").ShowDialog();
+
+                    btnUpload_Clicked();
+
+                    break;
+
+                case 6:
+
+                    System.IO.File.WriteAllText("Printer","");
+                    System.IO.File.WriteAllText("Printer",txtPrinter.Text);
+
+                    break;
+
+                case 5:
+
+
+                    PrintDialog printDialog = new PrintDialog();
+                    PrintQueue queue = new LocalPrintServer().GetPrintQueue(txtPrinter.Text);
+                  
+                    printDialog.PrintQueue = queue;
+
+                    printDialog.PageRangeSelection = PageRangeSelection.AllPages;
+
+                    printDialog.PrintVisual(MainReport.Main.StackReport, "");
 
 
                    
                     break;
             }
+        }
+
+        private async void btnUpload_Clicked()
+        {
+            try
+            {
+                ProgressBar progressBar = new ProgressBar();
+                progressBar.Foreground = Brushes.LightGreen;
+                progressBar.Height = 20;
+
+                progressBar.BorderBrush = Brushes.White;
+                progressBar.BorderThickness = new Thickness(1);
+                TextBlock percentStr = new TextBlock { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, FontSize = 15, Foreground = Brushes.Black };
+                progressBar.Maximum = 100;
+                progressBar.Minimum = 0;
+
+                GridProgress.Children.Clear();
+                GridProgress.Children.Add(progressBar);
+                GridProgress.Children.Add(percentStr);
+
+
+
+                var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+                var path = DAL.Database.Path;
+
+                var stream = File.Open(path, FileMode.Open);
+                var deviceName = System.Environment.MachineName;
+
+                var task = new FirebaseStorage("khiratserv.appspot.com",
+                    new FirebaseStorageOptions
+                    {
+                        ThrowOnCancel = true
+                    })
+                      .Child(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name)
+                    .Child(deviceName)
+                    .Child(DAL.Database.Path)
+                    .PutAsync(stream);
+
+                task.Progress.ProgressChanged += (s, args) =>
+                {
+                    progressBar.Value = args.Percentage;
+                    percentStr.Text = progressBar.Value.ToString() + " %";
+                };
+
+                var downloadlink = await task;
+
+
+                var progressHide = new Progress<int>(
+                ValueProgress =>
+                {
+                    GridProgress.Children.Clear();
+                });
+
+
+                await Task.Run(() => { HideProgress(10, progressHide); });
+            }
+            catch (Exception m)
+            {
+
+                new Pages.MessageBoxWindows(m.Message,"مشكلة في رفع قاعدة البيانات").ShowDialog();
+                GridProgress.Children.Clear();
+            }
+
+           
+
+        }
+
+        void HideProgress(int Time, IProgress<int> progress)
+        {
+
+            System.Threading.Thread.Sleep(Time * 100);
+            progress.Report(0);
+
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -258,6 +376,26 @@ namespace Warehouse_Manage
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             CheckApp("Warehouse_Manage","Mujahed1200");
+
+
+
+            foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
+            {
+                txtPrinter.Items.Add(printer);
+            }
+
+
+            if (System.IO.File.Exists("Printer")==false)
+            {
+                System.IO.File.WriteAllText("Printer","");
+            }
+
+           else if (System.IO.File.Exists("Printer") )
+            {
+                txtPrinter.Text = System.IO.File.ReadAllText("Printer");
+            }
+
+
         }
     }
 }
