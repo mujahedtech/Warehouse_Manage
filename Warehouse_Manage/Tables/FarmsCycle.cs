@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Warehouse_Manage.Tables
 {
-    class FarmsCycle
+    public class FarmsCycle
     {
 
         [PrimaryKey, AutoIncrement]

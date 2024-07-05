@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Warehouse_Manage.Tables
 {
-    class Miscellaneous
+    public class Miscellaneous
     {
 
         public Guid MiscellaneousID { get; set; }

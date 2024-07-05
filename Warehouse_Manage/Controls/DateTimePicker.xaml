@@ -140,109 +140,6 @@
         </Style>
 
 
-        <Style TargetType="{x:Type ToggleButton}" x:Key="ToggleAsImageWithHint">
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Grid VerticalAlignment="Center" Background="Transparent" Name="border">
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="2"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-
-                            <Image Name="image1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="30" Width="50"  Stretch="Uniform"  />
-
-
-
-                            <Popup Grid.Row="0" Name="pophint" IsOpen="False" AllowsTransparency="True" PlacementTarget="{Binding ElementName=border}" Placement="Center">
-                                <Grid >
-                                    <Border Margin="0,0,0,60" BorderBrush="LightGray" BorderThickness="1" Background="White" CornerRadius="5">
-                                        <Grid >
-                                            <Label Content="{TemplateBinding FontFamily}"/>
-                                        </Grid>
-                                    </Border>
-                                </Grid>
-
-
-                            </Popup>
-                        </Grid>
-                        <!--<ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="border" Value="WhiteSmoke" />
-
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource MenuColor}" />
-
-                            </Trigger>
-
-                        </ControlTemplate.Triggers>-->
-
-                        <ControlTemplate.Triggers>
-
-
-
-                            <Trigger Property="IsChecked" Value="True" >
-
-
-
-
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard HandoffBehavior="SnapshotAndReplace">
-                                        <Storyboard>
-                                            <DoubleAnimation 
-                                                               Storyboard.TargetName="border"
-                                                               Storyboard.TargetProperty="(Border.Opacity)" 
-                                                               From="1" To="0" Duration="0:0:.1" AutoReverse="True" />
-
-
-
-
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation 
-                                                               Storyboard.TargetName="border"
-                                                               Storyboard.TargetProperty="(Border.Opacity)" 
-                                                               From="0" To="1" Duration="0:0:.1"   />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-
-
-
-                            </Trigger>
-
-
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="pophint" Property="IsOpen" Value="true"/>
-                                <Setter Property="Cursor" Value="Hand"/>
-                            </Trigger>
-
-
-                            <Trigger Property="Uid" Value="Cal">
-                                <Setter TargetName="image1" Property="Source" Value="pack://application:,,,/Images/Calender.png"/>
-
-                            </Trigger>
-                            <Trigger Property="Uid" Value="Up">
-                                <Setter TargetName="image1" Property="Source" Value="pack://application:,,,/Images/Up.png"/>
-
-                            </Trigger>
-                            <Trigger Property="Uid" Value="Down">
-                                <Setter TargetName="image1" Property="Source" Value="pack://application:,,,/Images/Down.png"/>
-
-                            </Trigger>
-
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
 
 
@@ -282,7 +179,7 @@
 
         <TextBox  IsReadOnly="True"  Text="{Binding SelectDate,StringFormat=yyyy/MM/dd}"  Foreground="Gray"  VerticalAlignment="Center" MinWidth="50"  BorderThickness="0" BorderBrush="Transparent"/>
 
-        <ToggleButton LostFocus="ToggleButton_LostFocus"   VerticalAlignment="Center" Click="SelecDatebtn_Click"   Grid.Column="1"  Style="{StaticResource ToggleAsImageWithHint}" FontFamily="Select Date"  Uid="Cal" />
+        <ToggleButton LostFocus="ToggleButton_LostFocus"   VerticalAlignment="Center" Click="SelecDatebtn_Click"   Grid.Column="1"  Style="{StaticResource DateToggle}" FontFamily="Select Date"  Uid="Cal" />
 
         <Popup  Placement="Bottom" PlacementTarget="{Binding ElementName=DateGrid}"  IsOpen="False" StaysOpen="False"  AllowsTransparency="True" Name="ViewDate">
             <Grid>
@@ -350,9 +247,14 @@
                             <TextBlock Text="{Binding SelectDate,StringFormat=MMMM yyyy}" Margin="5,0"  Grid.Column="1" Grid.ColumnSpan="4" FontSize="15" Foreground="Gray"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
                             <StackPanel Height="30" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <ToggleButton FontFamily="Next" Click="PreviousMonth" Width="30" Uid="Up" HorizontalAlignment="Right" Style="{StaticResource ToggleAsImageWithHint}"/>
+                                <ToggleButton FontFamily="Next" Click="PreviousMonth" Width="30" Uid="Up" HorizontalAlignment="Right" Style="{StaticResource DateToggle}"/>
                                 <Grid Width="10"/>
-                                <ToggleButton FontFamily="Back" Click="NextMonth" Width="30" Uid="Down" HorizontalAlignment="Right" Style="{StaticResource ToggleAsImageWithHint}"/>
+                                <ToggleButton FontFamily="Back"
+                                              Click="NextMonth"
+                                              Width="30"
+                                              Uid="Down"
+                                              HorizontalAlignment="Right"
+                                              Style="{StaticResource DateToggle}"/>
                             </StackPanel>
 
 

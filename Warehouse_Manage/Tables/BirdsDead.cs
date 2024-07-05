@@ -8,7 +8,7 @@ namespace Warehouse_Manage.Tables
 {
 
     //هذا جدول مختص بعدد الصوص وفيات يومي
-    class BirdsDead
+   public class BirdsDead
     {
 
         public Guid BirdsDeadID { get; set; }

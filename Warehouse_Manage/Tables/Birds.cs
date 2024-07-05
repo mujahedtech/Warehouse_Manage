@@ -8,7 +8,7 @@ namespace Warehouse_Manage.Tables
 {
 
     //هذا جدول خاص بعدد الصوص الي نزل على المزرعة
-    class Birds
+   public class Birds
     {
 
         public Guid BirdID { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Warehouse_Manage.Tables
 {
-    class Fuel
+    public class Fuel
     {
         public Guid FuelID { get; set; }
 

@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Warehouse_Manage.Reports;
 using Firebase.Storage;
+using Warehouse_Manage.DAL;
 
 namespace Warehouse_Manage
 {
@@ -71,7 +72,12 @@ namespace Warehouse_Manage
 
             Loaded += MainWindow_Loaded;
 
-           
+
+
+          
+
+
+
         }
 
        
@@ -394,7 +400,7 @@ namespace Warehouse_Manage
             {
                 txtPrinter.Text = System.IO.File.ReadAllText("Printer");
             }
-
+            new Database();
 
         }
     }

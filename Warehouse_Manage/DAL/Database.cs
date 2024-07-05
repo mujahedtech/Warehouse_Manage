@@ -8,7 +8,7 @@ using Warehouse_Manage.Tables;
 
 namespace Warehouse_Manage.DAL
 {
-    class Database
+   public class Database
     {
 
 
@@ -23,6 +23,10 @@ namespace Warehouse_Manage.DAL
         {
             dbpath = Path;
             _database = new SQLiteAsyncConnection(dbpath);
+
+
+
+            
 
             _database.CreateTableAsync<Tables.Farms>();
             _database.CreateTableAsync<Tables.FarmsCycle>();

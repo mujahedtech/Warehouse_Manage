@@ -12,6 +12,10 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Indigo.xaml" />-->
+
+                <ResourceDictionary Source="StylesFile/PathNames.xaml" />
+                <ResourceDictionary Source="StylesFile/ButtonStyle.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
 
 

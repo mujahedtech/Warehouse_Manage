@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Warehouse_Manage.Tables
 {
-    class Carpentrys
+    public class Carpentrys
     {
 
         public Guid CarpentryID { get; set; }
